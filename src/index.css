@@ -1,0 +1,12 @@
+div {
+  padding: 4px;
+  margin: 4px;
+}
+
+label, input {
+  margin: 0 4px;
+}
+
+.text-center {
+  text-align: center;
+}
