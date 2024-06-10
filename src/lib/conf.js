@@ -10,7 +10,7 @@ export const HASH_OPTIONS = {
   N: 32768, // CPU/memory cost parameter, 2^15
   r: 8, // block size parameter
   p: 1, // parallelization parameter: [TODO] 5
-  keyLen: 32,
+  keyLen: 64,
 };
 
 export const getEvmPrivateKey = (h) =>

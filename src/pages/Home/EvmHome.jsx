@@ -1,37 +1,29 @@
 import React, { useContext, useState, useMemo, useEffect } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { NETWORKS } from "@mybucks/lib/conf";
-import { tokens } from "@sushiswap/default-token-list";
 import Token from "@mybucks/components/Token";
+import copy from "clipboard-copy";
+import { ethers } from "ethers";
 
 const EvmHome = () => {
-  const { account, chainId, updateChain, reset } = useContext(StoreContext);
-  const [loading, setLoading] = useState(false);
-  const [nativeBalance, setNativeBalance] = useState(0);
+  const {
+    account,
+    chainId,
+    updateChain,
+    reset,
+    loading,
+    nativeBalance,
+    tokenBalances,
+    fetchBalances,
+  } = useContext(StoreContext);
   const explorerUrl = useMemo(() => NETWORKS[chainId].scanner, [chainId]);
-
-  // [TODO] fetch holding tokens list first
-  const activeTokens = useMemo(
-    () => tokens.filter(({ chainId: chain }) => chain == chainId).slice(0, 4),
-    [chainId]
-  );
-
-  useEffect(() => {
-    refreshBalances();
-  }, [account]);
 
   const changeChain = (e) => {
     updateChain(e.target.value);
   };
 
-  const refreshBalances = async () => {
-    setLoading(true);
-    setNativeBalance(await account.nativeCurrency());
-    setLoading(false);
-  };
-
   const copyAddress = () => {
-    navigator.clipboard.writeText(account.address);
+    copy(account.address);
   };
 
   const tokenSelected = (token) => {
@@ -49,7 +41,7 @@ const EvmHome = () => {
           ))}
         </select>
 
-        <button onClick={refreshBalances}>Refresh</button>
+        <button onClick={fetchBalances}>Refresh</button>
         <button>Backup</button>
         <button>Show password</button>
         <button onClick={() => reset()}>Logout</button>
@@ -62,17 +54,26 @@ const EvmHome = () => {
         <button onClick={copyAddress}>Copy</button>
       </h2>
 
-      <h1 className="text-center">{loading ? "---" : nativeBalance}</h1>
+      <h1 className="text-center">
+        {loading ? "---" : Number(nativeBalance).toFixed(4)}
+      </h1>
 
       <div>
-        {activeTokens.map((t) => (
-          <Token
-            token={t}
-            balance={2503}
-            key={t.address}
-            onClick={tokenSelected}
-          />
-        ))}
+        {tokenBalances
+          .filter((t) => !t.native_token)
+          .map((t) => (
+            <Token
+              token={{
+                symbol: t.contract_ticker_symbol,
+                name: t.contract_name,
+                logoURI: t.logoURI,
+              }}
+              balance={ethers.formatUnits(t.balance, t.contract_decimals)}
+              quote={t.quote}
+              key={t.contract_address}
+              onClick={() => tokenSelected(t)}
+            />
+          ))}
       </div>
     </div>
   );

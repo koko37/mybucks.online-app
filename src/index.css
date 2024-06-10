@@ -10,3 +10,11 @@ label, input {
 .text-center {
   text-align: center;
 }
+
+h1, h2, h3, h4, h5 {
+  margin: 8px 0;
+}
+
+p {
+  margin: 0;
+}

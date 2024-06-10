@@ -15,7 +15,7 @@ import s from "./index.module.css";
   onClick:
     (token) => void
 */
-const Token = ({ token, balance, onClick }) => (
+const Token = ({ token, balance, quote, onClick }) => (
   <div className={s.token} onClick={() => onClick(token)}>
     <img src={token.logoURI} alt={token.symbol} className={s.logo} />
     <div className={s.info}>
@@ -23,7 +23,10 @@ const Token = ({ token, balance, onClick }) => (
       <div>{token.name}</div>
     </div>
 
-    <h3 className={s.balance}>{balance}</h3>
+    <div className={s.value}>
+      <h3 className={s.balance}>{Number(balance).toFixed(4)}</h3>
+      {quote && <p>${Number(quote).toFixed(2)}</p>}
+    </div>
   </div>
 );
 

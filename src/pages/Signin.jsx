@@ -41,6 +41,10 @@ const SignIn = () => {
   return (
     <div>
       <div>
+        <h1>mybucks.online</h1>
+        <p>No seed, non custodial, password only wallet</p>
+      </div>
+      <div>
         <label htmlFor="password1">Password 1</label>
         <input
           id="password1"

@@ -5,6 +5,11 @@ import {
   DEFAULT_NETWORK,
   NETWORK_EVM,
 } from "@mybucks/lib/conf";
+import { tokens as defaultTokens } from "@sushiswap/default-token-list";
+import { ethers } from "ethers";
+import { CovalentClient } from "@covalenthq/client-sdk";
+
+const client = new CovalentClient(import.meta.env.VITE_COVALENT_KEY);
 
 export const StoreContext = createContext({
   password: "",
@@ -18,6 +23,13 @@ export const StoreContext = createContext({
   chainId: DEFAULT_CHAIN_ID,
   account: null,
   updateChain: (c) => {},
+
+  loading: false,
+
+  nativeBalance: 0,
+  tokenBalances: [],
+  nftBalances: [],
+  fetchBalances: () => {},
 });
 
 const StoreProvider = ({ children }) => {
@@ -31,6 +43,14 @@ const StoreProvider = ({ children }) => {
   const [network, setNetwork] = useState(DEFAULT_NETWORK);
   const [account, setAccount] = useState(null);
 
+  // common
+  const [loading, setLoading] = useState(false);
+
+  // balances related
+  const [nativeBalance, setNativeBalance] = useState(0);
+  const [tokenBalances, setTokenBalances] = useState([]);
+  const [nftBalances, setNftBalances] = useState([]);
+
   useEffect(() => {
     if (hash) {
       if (network === NETWORK_EVM) {
@@ -38,6 +58,12 @@ const StoreProvider = ({ children }) => {
       }
     }
   }, [hash, chainId, network]);
+
+  useEffect(() => {
+    if (account) {
+      fetchBalances();
+    }
+  }, [account]);
 
   const reset = () => {
     setPassword("");
@@ -47,6 +73,12 @@ const StoreProvider = ({ children }) => {
     setChainId(DEFAULT_CHAIN_ID);
     setNetwork(DEFAULT_NETWORK);
     setAccount(null);
+
+    setLoading(false);
+
+    setNativeBalance(0);
+    setTokenBalances([]);
+    setNftBalances([]);
   };
 
   const setup = (p, s, h) => {
@@ -56,6 +88,35 @@ const StoreProvider = ({ children }) => {
   };
 
   const updateChain = (id) => setChainId(id);
+
+  const fetchBalances = async () => {
+    setLoading(true);
+    try {
+      // [TODO] replace address into account.address
+      const { data } =
+        await client.BalanceService.getTokenBalancesForWalletAddress(
+          chainId,
+          account.address
+        );
+      setTokenBalances(
+        data.items
+          .filter((t) => t.balance.toString() !== "0")
+          .map((token) => ({
+            ...token,
+            logoURI: defaultTokens.find(
+              (t) =>
+                t.address.toLowerCase() === token.contract_address.toLowerCase()
+            )?.logoURI,
+          }))
+      );
+      setNativeBalance(
+        ethers.formatUnits(data.items.find((t) => !!t.native_token).balance, 18)
+      );
+    } catch (e) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <StoreContext.Provider
@@ -69,6 +130,11 @@ const StoreProvider = ({ children }) => {
         chainId,
         account,
         updateChain,
+        loading,
+        nativeBalance,
+        tokenBalances,
+        nftBalances,
+        fetchBalances,
       }}
     >
       {children}
