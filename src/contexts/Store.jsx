@@ -26,6 +26,7 @@ export const StoreContext = createContext({
 
   loading: false,
 
+  nativeTokenName: "ETH",
   nativeBalance: 0,
   tokenBalances: [],
   nftBalances: [],
@@ -47,6 +48,7 @@ const StoreProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   // balances related
+  const [nativeTokenName, setNativeTokenName] = useState("ETH");
   const [nativeBalance, setNativeBalance] = useState(0);
   const [tokenBalances, setTokenBalances] = useState([]);
   const [nftBalances, setNftBalances] = useState([]);
@@ -100,19 +102,27 @@ const StoreProvider = ({ children }) => {
         );
       setTokenBalances(
         data.items
-          .filter((t) => t.balance.toString() !== "0")
+          .filter(
+            (token) => token.balance.toString() !== "0" || token.native_token
+          )
           .map((token) => ({
             ...token,
-            logoURI: defaultTokens.find(
-              (t) =>
-                t.address.toLowerCase() === token.contract_address.toLowerCase()
+            logoURI: defaultTokens.find((t) =>
+              token.native_token
+                ? t.name === token.contract_name
+                : t.address.toLowerCase() ===
+                  token.contract_address.toLowerCase()
             )?.logoURI,
           }))
       );
       setNativeBalance(
         ethers.formatUnits(data.items.find((t) => !!t.native_token).balance, 18)
       );
+      setNativeTokenName(
+        data.items.find((t) => !!t.native_token).contract_ticker_symbol
+      );
     } catch (e) {
+      console.error("failed to fetch token balances ...");
     } finally {
       setLoading(false);
     }
@@ -131,6 +141,7 @@ const StoreProvider = ({ children }) => {
         account,
         updateChain,
         loading,
+        nativeTokenName,
         nativeBalance,
         tokenBalances,
         nftBalances,

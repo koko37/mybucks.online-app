@@ -12,6 +12,7 @@ const EvmHome = () => {
     updateChain,
     reset,
     loading,
+    nativeTokenName,
     nativeBalance,
     tokenBalances,
     fetchBalances,
@@ -55,10 +56,25 @@ const EvmHome = () => {
       </h2>
 
       <h1 className="text-center">
-        {loading ? "---" : Number(nativeBalance).toFixed(4)}
+        {loading ? "---" : Number(nativeBalance).toFixed(4)} {nativeTokenName}
       </h1>
 
       <div>
+        {tokenBalances
+          .filter((t) => !!t.native_token)
+          .map((t) => (
+            <Token
+              token={{
+                symbol: t.contract_ticker_symbol,
+                name: t.contract_name,
+                logoURI: t.logoURI,
+              }}
+              balance={ethers.formatUnits(t.balance, t.contract_decimals)}
+              quote={t.quote}
+              key={t.contract_address}
+              onClick={() => tokenSelected(t)}
+            />
+          ))}
         {tokenBalances
           .filter((t) => !t.native_token)
           .map((t) => (

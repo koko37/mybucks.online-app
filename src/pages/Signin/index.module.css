@@ -1,0 +1,19 @@
+.content {
+  display: flex;
+
+  @media only screen and (max-width: 1024px) {
+    flex-direction: column;
+  }
+}
+
+.help {
+  width: 40%;
+
+  @media only screen and (max-width: 1024px) {
+    width: 100%;
+  }
+}
+
+.form {
+
+}
