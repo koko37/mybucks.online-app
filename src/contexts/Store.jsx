@@ -3,6 +3,7 @@ import EvmAccount from "@mybucks/lib/account";
 import {
   DEFAULT_CHAIN_ID,
   DEFAULT_NETWORK,
+  DEFAULT_ASSET,
   NETWORK_EVM,
 } from "@mybucks/lib/conf";
 import { tokens as defaultTokens } from "@sushiswap/default-token-list";
@@ -26,7 +27,7 @@ export const StoreContext = createContext({
 
   loading: false,
 
-  nativeTokenName: "ETH",
+  nativeTokenName: DEFAULT_ASSET,
   nativeBalance: 0,
   tokenBalances: [],
   nftBalances: [],
@@ -48,7 +49,7 @@ const StoreProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   // balances related
-  const [nativeTokenName, setNativeTokenName] = useState("ETH");
+  const [nativeTokenName, setNativeTokenName] = useState(DEFAULT_ASSET);
   const [nativeBalance, setNativeBalance] = useState(0);
   const [tokenBalances, setTokenBalances] = useState([]);
   const [nftBalances, setNftBalances] = useState([]);
@@ -78,6 +79,7 @@ const StoreProvider = ({ children }) => {
 
     setLoading(false);
 
+    setNativeTokenName(DEFAULT_ASSET);
     setNativeBalance(0);
     setTokenBalances([]);
     setNftBalances([]);

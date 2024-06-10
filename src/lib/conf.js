@@ -9,7 +9,7 @@ const abi = new ethers.AbiCoder();
 export const HASH_OPTIONS = {
   N: 32768, // CPU/memory cost parameter, 2^15
   r: 8, // block size parameter
-  p: 1, // parallelization parameter: [TODO] 5
+  p: 5, // parallelization parameter: [TODO] 5
   keyLen: 64,
 };
 
@@ -17,13 +17,14 @@ export const getEvmPrivateKey = (h) =>
   ethers.keccak256(abi.encode(["string"], [h]));
 
 // btc | evm | solana | tron
-export const NETWORK_BTC = "btc"
-export const NETWORK_EVM = "evm"
-export const NETWORK_TRON = "tron"
-export const NETWORK_SOLANA = "sol"
+export const NETWORK_BTC = "btc";
+export const NETWORK_EVM = "evm";
+export const NETWORK_TRON = "tron";
+export const NETWORK_SOLANA = "sol";
 
 export const DEFAULT_NETWORK = NETWORK_EVM;
 export const DEFAULT_CHAIN_ID = 1;
+export const DEFAULT_ASSET = "ETH";
 
 export const NETWORKS = {
   1: {
@@ -31,8 +32,7 @@ export const NETWORKS = {
     name: "ethereum",
     label: "Ethereum",
     provider:
-      "https://mainnet.infura.io/v3/" +
-      import.meta.env.VITE_RPC_MAINNNET_KEY,
+      "https://mainnet.infura.io/v3/" + import.meta.env.VITE_RPC_MAINNNET_KEY,
     scanner: "https://etherscan.io",
   },
   56: {
