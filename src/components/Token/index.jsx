@@ -15,9 +15,23 @@ import s from "./index.module.css";
   onClick:
     (token) => void
 */
+
+const Avatar = ({ letter, bgColor }) => (
+  <span className={s.avatar} style={{ backgroundColor: bgColor }}>
+    {letter.toUpperCase()}
+  </span>
+);
+
 const Token = ({ token, balance, quote, onClick }) => (
   <div className={s.token} onClick={() => onClick(token)}>
-    <img src={token.logoURI} alt={token.symbol} className={s.logo} />
+    {token.logoURI ? (
+      <img src={token.logoURI} alt={token.symbol} className={s.logo} />
+    ) : (
+      <Avatar
+        letter={token.symbol[0]}
+        bgColor={"#" + token.contract.slice(2, 8)}
+      />
+    )}
     <div className={s.info}>
       <div>{token.symbol}</div>
       <div>{token.name}</div>

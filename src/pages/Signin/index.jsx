@@ -161,6 +161,17 @@ const SignIn = () => {
         </div>
 
         <div>
+          <ul>
+            <li className="disabled">Min length: 12</li>
+            <li className="disabled">Uppercase (A~Z)</li>
+            <li className="disabled">Lowercase (a~z)</li>
+            <li className="disabled">Number (012~9)</li>
+            <li className="disabled">Special characters(!@#..)</li>
+            <li className="disabled">Don't forget!!!</li>
+          </ul>
+        </div>
+
+        <div>
           <button onClick={onSubmit} disabled={disabled || hasError}>
             Open
           </button>

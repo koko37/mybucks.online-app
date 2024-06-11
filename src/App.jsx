@@ -2,11 +2,18 @@ import { useContext } from "react";
 import { StoreContext } from "./contexts/Store";
 import SignIn from "@mybucks/pages/Signin";
 import Home from "@mybucks/pages/Home";
+import Transfer from "./pages/Transfer";
 
 function App() {
-  const { hash, account } = useContext(StoreContext);
+  const { hash, account, selectedToken } = useContext(StoreContext);
 
-  return !hash || !account ? <SignIn /> : <Home />;
+  if (!hash || !account) {
+    return <SignIn />;
+  }
+  if (selectedToken) {
+    return <Transfer />;
+  }
+  return <Home />;
 }
 
 export default App;

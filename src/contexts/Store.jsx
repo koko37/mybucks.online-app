@@ -9,6 +9,7 @@ import {
 import { tokens as defaultTokens } from "@sushiswap/default-token-list";
 import { ethers } from "ethers";
 import { CovalentClient } from "@covalenthq/client-sdk";
+import camelcaseKeys from "camelcase-keys";
 
 const client = new CovalentClient(import.meta.env.VITE_COVALENT_KEY);
 
@@ -32,6 +33,9 @@ export const StoreContext = createContext({
   tokenBalances: [],
   nftBalances: [],
   fetchBalances: () => {},
+
+  selectedToken: "",
+  selectToken: (t) => {},
 });
 
 const StoreProvider = ({ children }) => {
@@ -53,6 +57,8 @@ const StoreProvider = ({ children }) => {
   const [nativeBalance, setNativeBalance] = useState(0);
   const [tokenBalances, setTokenBalances] = useState([]);
   const [nftBalances, setNftBalances] = useState([]);
+
+  const [selectedToken, setSelectedToken] = useState("");
 
   useEffect(() => {
     if (hash) {
@@ -83,6 +89,8 @@ const StoreProvider = ({ children }) => {
     setNativeBalance(0);
     setTokenBalances([]);
     setNftBalances([]);
+
+    setSelectedToken("");
   };
 
   const setup = (p, s, h) => {
@@ -100,28 +108,29 @@ const StoreProvider = ({ children }) => {
       const { data } =
         await client.BalanceService.getTokenBalancesForWalletAddress(
           chainId,
-          account.address
+          "0x620dc94C842817d5d8b8207aa2DdE4f8C8b73415"
         );
+      const tokens = camelcaseKeys(data.items, { deep: true });
       setTokenBalances(
-        data.items
+        tokens
           .filter(
-            (token) => token.balance.toString() !== "0" || token.native_token
+            (token) => token.balance.toString() !== "0" || token.nativeToken
           )
           .map((token) => ({
             ...token,
             logoURI: defaultTokens.find((t) =>
-              token.native_token
-                ? t.name === token.contract_name
+              token.nativeToken
+                ? t.name === token.contractName
                 : t.address.toLowerCase() ===
-                  token.contract_address.toLowerCase()
+                  token.contractAddress.toLowerCase()
             )?.logoURI,
           }))
       );
       setNativeBalance(
-        ethers.formatUnits(data.items.find((t) => !!t.native_token).balance, 18)
+        ethers.formatUnits(tokens.find((t) => !!t.nativeToken).balance, 18)
       );
       setNativeTokenName(
-        data.items.find((t) => !!t.native_token).contract_ticker_symbol
+        tokens.find((t) => !!t.nativeToken).contractTickerSymbol
       );
     } catch (e) {
       console.error("failed to fetch token balances ...");
@@ -129,6 +138,8 @@ const StoreProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+  const selectToken = (t) => setSelectedToken(t);
 
   return (
     <StoreContext.Provider
@@ -148,6 +159,8 @@ const StoreProvider = ({ children }) => {
         tokenBalances,
         nftBalances,
         fetchBalances,
+        selectedToken,
+        selectToken,
       }}
     >
       {children}

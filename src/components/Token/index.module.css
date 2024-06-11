@@ -1,15 +1,24 @@
 .token {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .logo {
   width: 48px;
   height: 48px;
   border-radius: 24px;
-  background-color: darkgray;
-  font-size: 12px;
-  text-align: center;
+}
+
+.avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  font-size: 32px;
 }
 
 .info {

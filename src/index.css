@@ -3,8 +3,14 @@ div {
   margin: 4px;
 }
 
-label, input {
+label {
   margin: 0 4px;
+}
+
+input {
+  margin: 0 4px;
+  padding: 4px;
+  width: 240px;
 }
 
 .text-center {
@@ -22,4 +28,8 @@ p {
 button, select {
   padding: 4px 12px;
   margin: 4px;
+}
+
+.secondary, .disabled {
+  color: gray;
 }
