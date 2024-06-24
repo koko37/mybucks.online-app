@@ -5,15 +5,19 @@ import Home from "@mybucks/pages/Home";
 import Token from "./pages/Token";
 
 function App() {
-  const { hash, account, selectedToken } = useContext(StoreContext);
+  const { connectivity, hash, account, selectedTokenAddress } =
+    useContext(StoreContext);
 
-  if (!hash || !account) {
-    return <SignIn />;
-  }
-  if (selectedToken) {
-    return <Token />;
-  }
-  return <Home />;
+  return (
+    <div>
+      {!connectivity && (
+        <div className="border border-rounded">
+          Please check your internet connection!
+        </div>
+      )}
+      {!hash || !account ? <SignIn /> : selectedTokenAddress ? <Token /> : <Home />}
+    </div>
+  );
 }
 
 export default App;

@@ -57,12 +57,21 @@ class EvmAccount {
     await tx.wait();
   }
 
-  async estimateGasTransferErc20(token, to, amount) {
+  async populateTransferErc20(token, to, amount) {
     const erc20 = new Contract(token, IERC20.abi, this.provider);
     const result = await erc20
       .connect(this.account)
-      .transfer.estimateGas(to, amount);
+      .transfer.populateTransaction(to, amount);
     return result;
+  }
+
+  async estimateGas({ to, data, value = 0, from = this.account.address }) {
+    return await this.provider.estimateGas({
+      to,
+      data,
+      value,
+      from,
+    });
   }
 
   async execute(to, data, value, gasPrice = null, gasLimit = null) {

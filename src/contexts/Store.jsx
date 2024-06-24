@@ -38,7 +38,7 @@ export const StoreContext = createContext({
 
   fetchBalances: () => {},
 
-  selectedToken: "",
+  selectedTokenAddress: "",
   selectToken: (t) => {},
 });
 
@@ -66,7 +66,7 @@ const StoreProvider = ({ children }) => {
   // prices related
   const [nativeTokenPrice, setNativeTokenPrice] = useState(0);
 
-  const [selectedToken, setSelectedToken] = useState("");
+  const [selectedTokenAddress, setSelectedTokenAddress] = useState("");
 
   useEffect(() => {
     if (hash) {
@@ -114,7 +114,7 @@ const StoreProvider = ({ children }) => {
     setTokenBalances([]);
     setNftBalances([]);
 
-    setSelectedToken("");
+    setSelectedTokenAddress("");
   };
 
   const setup = (p, s, h) => {
@@ -156,14 +156,16 @@ const StoreProvider = ({ children }) => {
         tokens.find((t) => !!t.nativeToken).contractTickerSymbol
       );
       setNativeTokenPrice(tokens.find((t) => !!t.nativeToken).quoteRate);
+      setConnectivity(true);
     } catch (e) {
+      setConnectivity(false);
       console.error("failed to fetch token balances ...");
     } finally {
       setLoading(false);
     }
   };
 
-  const selectToken = (t) => setSelectedToken(t);
+  const selectToken = (t) => setSelectedTokenAddress(t);
 
   return (
     <StoreContext.Provider
@@ -185,7 +187,7 @@ const StoreProvider = ({ children }) => {
         nftBalances,
         nativeTokenPrice,
         fetchBalances,
-        selectedToken,
+        selectedTokenAddress,
         selectToken,
       }}
     >

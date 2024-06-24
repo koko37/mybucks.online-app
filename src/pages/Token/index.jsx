@@ -5,10 +5,11 @@ import { explorerLinkOfContract } from "@mybucks/lib/utils";
 import s from "./index.module.css";
 
 const Token = () => {
+  const [hasError, setHasError] = useState(false);
   const {
     account,
     chainId,
-    selectedToken,
+    selectedTokenAddress,
     selectToken,
     tokenBalances,
     fetchBalances,
@@ -17,8 +18,8 @@ const Token = () => {
     loading,
   } = useContext(StoreContext);
   const token = useMemo(
-    () => tokenBalances.find((t) => t.contractAddress === selectedToken),
-    [tokenBalances, selectedToken]
+    () => tokenBalances.find((t) => t.contractAddress === selectedTokenAddress),
+    [tokenBalances, selectedTokenAddress]
   );
   const balance = useMemo(
     () => ethers.formatUnits(token.balance, token.contractDecimals),
@@ -31,25 +32,42 @@ const Token = () => {
   const [gasEstimationValue, setGasEstimationValue] = useState(0);
 
   useEffect(() => {
-    if (!recipient || !amount || !token) {
-      setGasEstimation(0);
-      return;
-    }
+    const estimateGas = async () => {
+      if (!recipient || !ethers.isAddress(recipient) || !amount || !token) {
+        setHasError(true);
+        setGasEstimation(0);
+        return;
+      }
 
-    account
-      .estimateGasTransferErc20(
-        selectedToken,
-        recipient,
-        ethers.parseUnits(amount.toString(), token.contractDecimals)
-      )
-      .then((gasAmount) => {
+      setHasError(false);
+      const txData = !!token.nativeToken
+        ? {
+            to: recipient,
+            value: ethers.parseEther(amount.toString()),
+            data: null,
+          }
+        : await account.populateTransferErc20(
+            selectedTokenAddress,
+            recipient,
+            ethers.parseUnits(amount.toString(), token.contractDecimals)
+          );
+
+      try {
+        const gasAmount = await account.estimateGas(txData);
         const gas = Number(
           ethers.formatUnits(account.gasPrice * gasAmount, 18)
         );
         const value = gas * nativeTokenPrice;
         setGasEstimation(gas.toFixed(6));
         setGasEstimationValue(value.toFixed(6));
-      });
+      } catch (e) {
+        setGasEstimation("");
+        setGasEstimationValue("");
+        setHasError(true);
+      }
+    };
+
+    estimateGas();
   }, [recipient, amount, token]);
 
   const returnHome = () => selectToken("");
@@ -108,12 +126,18 @@ const Token = () => {
         <button onClick={setMaxAmount}>Max</button>
       </div>
 
+      {hasError ? (
+        <div>Invalid transfer</div>
+      ) : (
+        <div>
+          Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
+          {gasEstimationValue}
+        </div>
+      )}
       <div>
-        Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
-        {gasEstimationValue}
-      </div>
-      <div>
-        <button onClick={sendToken}>Submit</button>
+        <button onClick={sendToken} disabled={hasError}>
+          Submit
+        </button>
       </div>
 
       <div>
