@@ -87,8 +87,13 @@ const SignIn = () => {
           privateKey = keccak256(abi.encode(["string"], [key]))
         </pre>
         <p>
-          This will protect your account for more than 100+ years from
-          brute-force attacks. :)
+          This will protect your account for more than centuries from
+          brute-force attacks. :) Each account is unique because it is made
+          using &nbsp;
+          <a href="https://en.wikipedia.org/wiki/Pseudorandom_number_generator">
+            PRNG
+          </a>
+          .
           <br /> You can find the codebase &nbsp;
           <a
             href="https://github.com/koko37/mybucks.online/blob/master/src/lib/conf.js"

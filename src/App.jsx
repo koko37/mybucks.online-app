@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { StoreContext } from "./contexts/Store";
 import SignIn from "@mybucks/pages/Signin";
 import Home from "@mybucks/pages/Home";
-import Transfer from "./pages/Transfer";
+import Token from "./pages/Token";
 
 function App() {
   const { hash, account, selectedToken } = useContext(StoreContext);
@@ -11,7 +11,7 @@ function App() {
     return <SignIn />;
   }
   if (selectedToken) {
-    return <Transfer />;
+    return <Token />;
   }
   return <Home />;
 }

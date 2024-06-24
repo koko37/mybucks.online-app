@@ -1,12 +1,21 @@
-import React, { useState, useContext, useMemo } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { ethers } from "ethers";
 import { explorerLinkOfContract } from "@mybucks/lib/utils";
 import s from "./index.module.css";
 
-const Transfer = () => {
-  const { chainId, selectedToken, selectToken, tokenBalances, loading } =
-    useContext(StoreContext);
+const Token = () => {
+  const {
+    account,
+    chainId,
+    selectedToken,
+    selectToken,
+    tokenBalances,
+    fetchBalances,
+    nativeTokenName,
+    nativeTokenPrice,
+    loading,
+  } = useContext(StoreContext);
   const token = useMemo(
     () => tokenBalances.find((t) => t.contractAddress === selectedToken),
     [tokenBalances, selectedToken]
@@ -16,17 +25,42 @@ const Transfer = () => {
     [token]
   );
 
-  const [recipient, setRecipient] = useState();
-  const [amount, setAmount] = useState();
+  const [recipient, setRecipient] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [gasEstimation, setGasEstimation] = useState(0);
+  const [gasEstimationValue, setGasEstimationValue] = useState(0);
+
+  useEffect(() => {
+    if (!recipient || !amount || !token) {
+      setGasEstimation(0);
+      return;
+    }
+
+    account
+      .estimateGasTransferErc20(
+        selectedToken,
+        recipient,
+        ethers.parseUnits(amount.toString(), token.contractDecimals)
+      )
+      .then((gasAmount) => {
+        const gas = Number(
+          ethers.formatUnits(account.gasPrice * gasAmount, 18)
+        );
+        const value = gas * nativeTokenPrice;
+        setGasEstimation(gas.toFixed(6));
+        setGasEstimationValue(value.toFixed(6));
+      });
+  }, [recipient, amount, token]);
 
   const returnHome = () => selectToken("");
   const setMaxAmount = () => setAmount(balance);
+  const sendToken = () => {};
 
   return (
     <div>
       <div>
         <button onClick={returnHome}>&lt; Home</button>
-        <button>Refresh</button>
+        <button onClick={fetchBalances}>Refresh</button>
         {!token.nativeToken && (
           <a
             href={explorerLinkOfContract(chainId, token.contractAddress)}
@@ -74,9 +108,12 @@ const Transfer = () => {
         <button onClick={setMaxAmount}>Max</button>
       </div>
 
-      <div>Estimated gas fee: 0.0002 ETH</div>
       <div>
-        <button>Submit</button>
+        Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
+        {gasEstimationValue}
+      </div>
+      <div>
+        <button onClick={sendToken}>Submit</button>
       </div>
 
       <div>
@@ -86,4 +123,4 @@ const Transfer = () => {
   );
 };
 
-export default Transfer;
+export default Token;

@@ -14,6 +14,7 @@ import camelcaseKeys from "camelcase-keys";
 const client = new CovalentClient(import.meta.env.VITE_COVALENT_KEY);
 
 export const StoreContext = createContext({
+  connectivity: true,
   password: "",
   salt: "",
   hash: "",
@@ -32,6 +33,9 @@ export const StoreContext = createContext({
   nativeBalance: 0,
   tokenBalances: [],
   nftBalances: [],
+
+  nativeTokenPrice: 0,
+
   fetchBalances: () => {},
 
   selectedToken: "",
@@ -39,6 +43,7 @@ export const StoreContext = createContext({
 });
 
 const StoreProvider = ({ children }) => {
+  const [connectivity, setConnectivity] = useState(true);
   // key parts
   const [password, setPassword] = useState("");
   const [salt, setSalt] = useState("");
@@ -58,6 +63,9 @@ const StoreProvider = ({ children }) => {
   const [tokenBalances, setTokenBalances] = useState([]);
   const [nftBalances, setNftBalances] = useState([]);
 
+  // prices related
+  const [nativeTokenPrice, setNativeTokenPrice] = useState(0);
+
   const [selectedToken, setSelectedToken] = useState("");
 
   useEffect(() => {
@@ -69,9 +77,25 @@ const StoreProvider = ({ children }) => {
   }, [hash, chainId, network]);
 
   useEffect(() => {
-    if (account) {
-      fetchBalances();
+    if (!account) {
+      return;
     }
+    account.getGasPrice();
+    fetchBalances();
+    const intervalId = setInterval(() => {
+      account
+        .getGasPrice()
+        .then(() => {
+          setConnectivity(true);
+        })
+        .catch(() => {
+          setConnectivity(false);
+        });
+    }, 15000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [account]);
 
   const reset = () => {
@@ -104,11 +128,10 @@ const StoreProvider = ({ children }) => {
   const fetchBalances = async () => {
     setLoading(true);
     try {
-      // [TODO] replace address into account.address
       const { data } =
         await client.BalanceService.getTokenBalancesForWalletAddress(
           chainId,
-          "0x620dc94C842817d5d8b8207aa2DdE4f8C8b73415"
+          account.address
         );
       const tokens = camelcaseKeys(data.items, { deep: true });
       setTokenBalances(
@@ -132,6 +155,7 @@ const StoreProvider = ({ children }) => {
       setNativeTokenName(
         tokens.find((t) => !!t.nativeToken).contractTickerSymbol
       );
+      setNativeTokenPrice(tokens.find((t) => !!t.nativeToken).quoteRate);
     } catch (e) {
       console.error("failed to fetch token balances ...");
     } finally {
@@ -144,6 +168,7 @@ const StoreProvider = ({ children }) => {
   return (
     <StoreContext.Provider
       value={{
+        connectivity,
         password,
         salt,
         hash,
@@ -158,6 +183,7 @@ const StoreProvider = ({ children }) => {
         nativeBalance,
         tokenBalances,
         nftBalances,
+        nativeTokenPrice,
         fetchBalances,
         selectedToken,
         selectToken,
