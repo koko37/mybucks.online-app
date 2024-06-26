@@ -7,9 +7,10 @@ import { StoreContext } from "@mybucks/contexts/Store";
 import s from "./index.module.css";
 
 const SignIn = () => {
-  // [TODO] Remove default password, salt
-  const [password, setPassword] = useState("ranDommPassword***$%");
-  const [salt, setSalt] = useState("90901210");
+  const [password, setPassword] = useState(
+    import.meta.env.DEV ? "ranDommPassword***$%" : ""
+  );
+  const [salt, setSalt] = useState(import.meta.env.DEV ? "90901210" : "");
   const [disabled, setDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
 
