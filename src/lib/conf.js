@@ -52,3 +52,7 @@ export const NETWORKS = {
     scanner: "https://polygonscan.com",
   },
 };
+
+// [TODO] Please do not forget dividing by 100n
+export const gasMultiplier = (option) =>
+  option === "high" ? 175n : option === "average" ? 150n : 100n;

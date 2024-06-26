@@ -5,3 +5,8 @@
 .amount {
   width: 300px;
 }
+
+.logo {
+  border-radius: 24px;
+  margin-bottom: .5rem;
+}

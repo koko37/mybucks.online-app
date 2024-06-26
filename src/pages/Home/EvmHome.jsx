@@ -4,7 +4,7 @@ import { NETWORKS } from "@mybucks/lib/conf";
 import Token from "@mybucks/components/Token";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
-import { explorerLinkOfAddress, truncateAddress } from "@mybucks/lib/utils";
+import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
 
 const EvmHome = () => {
   const {
@@ -50,7 +50,7 @@ const EvmHome = () => {
           href={explorerLinkOfAddress(chainId, account.address)}
           target="_blank"
         >
-          {truncateAddress(account.address)}
+          {truncate(account.address)}
         </a>
         <button onClick={copyAddress}>Copy</button>
       </h2>

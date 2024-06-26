@@ -1,11 +1,22 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
+import ConfirmTransaction from "@mybucks/components/ConfirmTransaction";
+import MinedTransaction from "@mybucks/components/MinedTransaction";
 import { ethers } from "ethers";
 import { explorerLinkOfContract } from "@mybucks/lib/utils";
 import s from "./index.module.css";
 
 const Token = () => {
   const [hasError, setHasError] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const [transaction, setTransaction] = useState(null);
+  const [txHash, setTxHash] = useState("");
+
+  const [recipient, setRecipient] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [gasEstimation, setGasEstimation] = useState(0);
+  const [gasEstimationValue, setGasEstimationValue] = useState(0);
+
   const {
     account,
     chainId,
@@ -25,11 +36,6 @@ const Token = () => {
     () => ethers.formatUnits(token.balance, token.contractDecimals),
     [token]
   );
-
-  const [recipient, setRecipient] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [gasEstimation, setGasEstimation] = useState(0);
-  const [gasEstimationValue, setGasEstimationValue] = useState(0);
 
   useEffect(() => {
     const estimateGas = async () => {
@@ -51,6 +57,7 @@ const Token = () => {
             recipient,
             ethers.parseUnits(amount.toString(), token.contractDecimals)
           );
+      setTransaction(txData);
 
       try {
         const gasAmount = await account.estimateGas(txData);
@@ -72,7 +79,30 @@ const Token = () => {
 
   const returnHome = () => selectToken("");
   const setMaxAmount = () => setAmount(balance);
-  const sendToken = () => {};
+  const sendToken = () => setConfirming(true);
+
+  const execute = async (tx) => {
+    setConfirming(false);
+    setTransaction(null);
+    setRecipient("");
+    setAmount(0);
+
+    setTxHash(tx.hash);
+  };
+
+  if (confirming) {
+    return (
+      <ConfirmTransaction
+        {...transaction}
+        onReject={() => setConfirming(false)}
+        onSubmit={execute}
+      />
+    );
+  }
+
+  if (txHash) {
+    return <MinedTransaction hash={txHash} back={() => setTxHash("")} />;
+  }
 
   return (
     <div>
@@ -88,7 +118,17 @@ const Token = () => {
           </a>
         )}
       </div>
+
       <div>
+        <p className="text-center">
+          <img
+            className={s.logo}
+            src={token.logoURI}
+            alt={token.contractName}
+            width="48"
+            height="48"
+          />
+        </p>
         <p className="text-center">{token.contractName}</p>
         <h2 className="text-center">
           {loading ? "---" : Number(balance).toFixed(4)}
@@ -140,9 +180,7 @@ const Token = () => {
         </button>
       </div>
 
-      <div>
-        <h3>History</h3>
-      </div>
+      <h3 className="mt-h">History</h3>
     </div>
   );
 };

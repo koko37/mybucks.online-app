@@ -6,5 +6,8 @@ export const explorerLinkOfAddress = (chainId, addr) =>
 export const explorerLinkOfContract = (chainId, addr) =>
   NETWORKS[chainId].scanner + "/address/" + addr + "#code";
 
-export const truncateAddress = (address, len = 12) =>
-  address.slice(0, (len >> 1) + 2) + "..." + address.slice((len >> 1) * -1);
+export const explorerLinkOfTransaction = (chainId, tx) =>
+  NETWORKS[chainId].scanner + "/tx/" + tx;
+
+export const truncate = (str, len = 12) =>
+  str.slice(0, (len >> 1) + 2) + "..." + str.slice((len >> 1) * -1);

@@ -35,16 +35,6 @@ class EvmAccount {
     return ethers.formatEther(balance);
   }
 
-  async transferNativeCurrency(to, value, gasPrice = null, gasLimit = null) {
-    const tx = this.signer.sendTransaction({
-      to,
-      value: ethers.formatEther(value),
-      gasPrice,
-      gasLimit,
-    });
-    return await tx.wait();
-  }
-
   async balanceOfErc20(token) {
     const erc20 = new Contract(token, IERC20.abi, this.provider);
     const result = await erc20.balanceOf(this.account.address);
@@ -74,10 +64,10 @@ class EvmAccount {
     });
   }
 
-  async execute(to, data, value, gasPrice = null, gasLimit = null) {
-    const tx = this.signer.sendTransaction({
+  async execute({ to, data, value = 0, gasPrice = null, gasLimit = null }) {
+    const tx = await this.account.sendTransaction({
       to,
-      value: ethers.formatEther(value),
+      value,
       data,
       gasPrice,
       gasLimit,
