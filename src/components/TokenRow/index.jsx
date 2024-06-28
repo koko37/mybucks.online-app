@@ -22,7 +22,7 @@ const Avatar = ({ letter, bgColor }) => (
   </span>
 );
 
-const Token = ({ token, balance, quote, onClick }) => (
+const TokenRow = ({ token, balance, quote, onClick, balanceVisible }) => (
   <div className={s.token} onClick={() => onClick(token)}>
     {token.logoURI ? (
       <img src={token.logoURI} alt={token.symbol} className={s.logo} />
@@ -37,11 +37,11 @@ const Token = ({ token, balance, quote, onClick }) => (
       <div>{token.name}</div>
     </div>
 
-    <div className={s.value}>
+    {balanceVisible ? <div className={s.value}>
       <h3 className={s.balance}>{Number(balance).toFixed(4)}</h3>
-      {quote && <p>${Number(quote).toFixed(2)}</p>}
-    </div>
+      {!!quote && <p>${Number(quote).toFixed(2)}</p>}
+    </div> : <div className={s.value}>---</div>}
   </div>
 );
 
-export default Token;
+export default TokenRow;

@@ -1,13 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
-import { NETWORKS } from "@mybucks/lib/conf";
-import Token from "@mybucks/components/Token";
+import { NETWORKS, clipboardLifetime } from "@mybucks/lib/conf";
+import TokenRow from "@mybucks/components/TokenRow";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
 
 const EvmHome = () => {
   const {
+    password,
+    salt,
     account,
     chainId,
     updateChain,
@@ -19,13 +21,26 @@ const EvmHome = () => {
     fetchBalances,
     selectToken,
   } = useContext(StoreContext);
+  const [balancesVisible, setBalancesVisible] = useState(false);
 
   const changeChain = (e) => {
     updateChain(e.target.value);
   };
-
   const copyAddress = () => {
     copy(account.address);
+  };
+  const backupPrivateKey = () => {
+    copy(account.signer);
+  };
+  const backupPassword = () => {
+    copy(`${password} / ${salt}`);
+  };
+  const toggleBalancesVisible = () => {
+    setBalancesVisible(!balancesVisible);
+  };
+  const logout = () => {
+    reset();
+    copy("");
   };
 
   return (
@@ -40,9 +55,12 @@ const EvmHome = () => {
         </select>
 
         <button onClick={fetchBalances}>Refresh</button>
-        <button>Backup Private Key</button>
-        <button>Show password</button>
-        <button onClick={() => reset()}>Logout</button>
+        <button onClick={backupPrivateKey}>Backup private key</button>
+        <button onClick={backupPassword}>Backup password</button>
+        <button onClick={toggleBalancesVisible}>
+          {balancesVisible ? "Hide" : "Show"}
+        </button>
+        <button onClick={logout}>Logout</button>
       </div>
 
       <h2 className="text-center">
@@ -56,7 +74,13 @@ const EvmHome = () => {
       </h2>
 
       <h1 className="text-center">
-        {loading ? "---" : Number(nativeBalance).toFixed(4)} {nativeTokenName}
+        {loading
+          ? "???"
+          : !balancesVisible
+          ? "---"
+          : Number(nativeBalance).toFixed(4)}
+        &nbsp;
+        {nativeTokenName}
       </h1>
 
       <div>
@@ -64,7 +88,7 @@ const EvmHome = () => {
           .filter((t) => !!t.nativeToken)
           .concat(tokenBalances.filter((t) => !t.nativeToken))
           .map((t) => (
-            <Token
+            <TokenRow
               key={t.contractAddress}
               token={{
                 symbol: t.contractTickerSymbol,
@@ -73,6 +97,7 @@ const EvmHome = () => {
                 contract: t.contractAddress,
               }}
               balance={ethers.formatUnits(t.balance, t.contractDecimals)}
+              balanceVisible={balancesVisible}
               quote={t.quote}
               onClick={() => selectToken(t.contractAddress)}
             />

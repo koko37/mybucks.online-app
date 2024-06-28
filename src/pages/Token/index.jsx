@@ -131,11 +131,11 @@ const Token = () => {
         </p>
         <p className="text-center">{token.contractName}</p>
         <h2 className="text-center">
-          {loading ? "---" : Number(balance).toFixed(4)}
+          {loading ? "???" : Number(balance).toFixed(4)}
           &nbsp;
           <span className="secondary">{token.contractTickerSymbol}</span>
         </h2>
-        {token.quote && <p className="text-center">${token.quote}</p>}
+        {!!token.quote && <p className="text-center">${token.quote}</p>}
       </div>
 
       <div>
