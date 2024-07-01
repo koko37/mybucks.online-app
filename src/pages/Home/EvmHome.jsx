@@ -7,6 +7,11 @@ import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
 import { toast } from "react-toastify";
 
+import RefreshIcon from "@mybucks/assets/refresh.svg";
+import ShowIcon from "@mybucks/assets/show.svg";
+import HideIcon from "@mybucks/assets/hide.svg";
+import CopyIcon from "@mybucks/assets/copy.svg";
+
 const EvmHome = () => {
   const {
     password,
@@ -49,7 +54,7 @@ const EvmHome = () => {
 
   return (
     <div>
-      <div>
+      <div className="flex">
         <select onChange={changeChain} value={chainId}>
           {Object.values(NETWORKS).map(({ chainId: cId, label }) => (
             <option key={cId} value={cId}>
@@ -57,12 +62,13 @@ const EvmHome = () => {
             </option>
           ))}
         </select>
-
-        <button onClick={fetchBalances}>Refresh</button>
         <button onClick={backupPrivateKey}>Backup private key</button>
         <button onClick={backupPassword}>Backup password</button>
-        <button onClick={toggleBalancesVisible}>
-          {balancesVisible ? "Hide" : "Show"}
+        <button onClick={fetchBalances}>
+          <img src={RefreshIcon} />
+        </button>
+        <button onClick={toggleBalancesVisible} className="img-button">
+          <img src={balancesVisible ? HideIcon : ShowIcon} />
         </button>
         <button onClick={logout}>Logout</button>
       </div>
@@ -74,7 +80,9 @@ const EvmHome = () => {
         >
           {truncate(account.address)}
         </a>
-        <button onClick={copyAddress}>Copy</button>
+        <button onClick={copyAddress} className="img-button">
+          <img src={CopyIcon} />
+        </button>
       </h2>
 
       <h1 className="text-center">

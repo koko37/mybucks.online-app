@@ -30,6 +30,10 @@ button, select {
   margin: 4px;
 }
 
+.img-button {
+  padding: 0 8px;
+}
+
 .secondary, .disabled {
   color: gray;
 }
@@ -45,4 +49,8 @@ button, select {
 
 .mt-h {
   margin-top: 1.5rem;
+}
+
+.flex {
+  display: flex;
 }
