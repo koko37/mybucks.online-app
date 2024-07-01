@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
-import { NETWORKS, clipboardLifetime } from "@mybucks/lib/conf";
+import { NETWORKS } from "@mybucks/lib/conf";
 import TokenRow from "@mybucks/components/TokenRow";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
+import { toast } from "react-toastify";
 
 const EvmHome = () => {
   const {
@@ -28,12 +29,15 @@ const EvmHome = () => {
   };
   const copyAddress = () => {
     copy(account.address);
+    toast("Address copied into clipboard.");
   };
   const backupPrivateKey = () => {
     copy(account.signer);
+    toast("Private key copied into clipboard.");
   };
   const backupPassword = () => {
     copy(`${password} / ${salt}`);
+    toast("Password copied into clipboard.");
   };
   const toggleBalancesVisible = () => {
     setBalancesVisible(!balancesVisible);

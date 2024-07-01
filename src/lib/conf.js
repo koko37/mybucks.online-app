@@ -56,6 +56,3 @@ export const NETWORKS = {
 // [TODO] Please do not forget dividing by 100n
 export const gasMultiplier = (option) =>
   option === "high" ? 175n : option === "average" ? 150n : 100n;
-
-// After copy sensitive information like private key or password, it will be cleaned up automatically after 15 seconds.
-export const clipboardLifetime = 15;

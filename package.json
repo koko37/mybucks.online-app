@@ -18,6 +18,7 @@
     "ethers": "^6.13.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-toastify": "^10.0.5",
     "scrypt-js": "^3.0.1"
   },
   "devDependencies": {
