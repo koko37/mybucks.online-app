@@ -4,6 +4,7 @@ import ConfirmTransaction from "@mybucks/components/ConfirmTransaction";
 import MinedTransaction from "@mybucks/components/MinedTransaction";
 import { ethers } from "ethers";
 import { explorerLinkOfContract } from "@mybucks/lib/utils";
+import RefreshIcon from "@mybucks/assets/refresh.svg";
 import s from "./index.module.css";
 
 const Token = () => {
@@ -105,10 +106,12 @@ const Token = () => {
   }
 
   return (
-    <div>
-      <div>
+    <div className="app">
+      <div className="flex">
         <button onClick={returnHome}>&lt; Home</button>
-        <button onClick={fetchBalances}>Refresh</button>
+        <button onClick={fetchBalances}>
+          <img src={RefreshIcon} />
+        </button>
         {!token.nativeToken && (
           <a
             href={explorerLinkOfContract(chainId, token.contractAddress)}

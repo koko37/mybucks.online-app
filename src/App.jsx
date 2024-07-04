@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { ToastContainer } from "react-toastify";
 import { useIdleTimer } from "react-idle-timer";
-import copy from "clipboard-copy";
 import { toast } from "react-toastify";
+import { IDLE_DURATION } from "./lib/conf";
 import { StoreContext } from "./contexts/Store";
 import SignIn from "@mybucks/pages/Signin";
 import Home from "@mybucks/pages/Home";
@@ -17,12 +17,11 @@ function App() {
   const onIdle = () => {
     if (hash && account) {
       reset();
-      copy("");
-      toast("Account locked after 15 minutes idle!")
+      toast("Account locked after 15 minutes idle!");
     }
   };
 
-  useIdleTimer({ onIdle, timeout: 900_000, throttle: 500 });
+  useIdleTimer({ onIdle, timeout: IDLE_DURATION, throttle: 500 });
 
   return (
     <div>

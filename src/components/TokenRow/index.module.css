@@ -2,6 +2,11 @@
   display: flex;
   align-items: center;
   cursor: pointer;
+  border-radius: 8px;
+  padding: 4px 16px;
+}
+.token:hover {
+  background-color: #EEE;
 }
 
 .logo {
@@ -26,5 +31,4 @@
 }
 
 .value {
-  min-width: 25%;
 }

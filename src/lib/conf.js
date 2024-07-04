@@ -56,3 +56,7 @@ export const NETWORKS = {
 // [TODO] Please do not forget dividing by 100n
 export const gasMultiplier = (option) =>
   option === "high" ? 175n : option === "average" ? 150n : 100n;
+
+
+// 15 minutes, after this period, wallet will be locked.
+export const IDLE_DURATION = 900_000

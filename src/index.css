@@ -54,3 +54,13 @@ button, select {
 .flex {
   display: flex;
 }
+
+.between {
+  justify-content: space-between;
+}
+
+.app {
+  width: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
+}

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { NETWORKS } from "@mybucks/lib/conf";
 import TokenRow from "@mybucks/components/TokenRow";
@@ -24,10 +24,15 @@ const EvmHome = () => {
     nativeTokenName,
     nativeBalance,
     tokenBalances,
+    tick,
     fetchBalances,
     selectToken,
   } = useContext(StoreContext);
   const [balancesVisible, setBalancesVisible] = useState(false);
+  const gasPrice = useMemo(
+    () => parseFloat(ethers.formatUnits(account.gasPrice, 9)).toFixed(1),
+    [tick, account]
+  );
 
   const changeChain = (e) => {
     updateChain(e.target.value);
@@ -53,24 +58,30 @@ const EvmHome = () => {
   };
 
   return (
-    <div>
-      <div className="flex">
-        <select onChange={changeChain} value={chainId}>
-          {Object.values(NETWORKS).map(({ chainId: cId, label }) => (
-            <option key={cId} value={cId}>
-              {label}
-            </option>
-          ))}
-        </select>
-        <button onClick={backupPrivateKey}>Backup private key</button>
-        <button onClick={backupPassword}>Backup password</button>
-        <button onClick={fetchBalances}>
-          <img src={RefreshIcon} />
-        </button>
-        <button onClick={toggleBalancesVisible} className="img-button">
-          <img src={balancesVisible ? HideIcon : ShowIcon} />
-        </button>
-        <button onClick={logout}>Logout</button>
+    <div className="app">
+      <div className="flex between">
+        <div className="flex">
+          <select onChange={changeChain} value={chainId}>
+            {Object.values(NETWORKS).map(({ chainId: cId, label }) => (
+              <option key={cId} value={cId}>
+                {label}
+              </option>
+            ))}
+          </select>
+          {gasPrice > 0 && <div>{gasPrice} GWei</div>}
+        </div>
+
+        <div className="flex">
+          <button onClick={backupPrivateKey}>Backup private key</button>
+          <button onClick={backupPassword}>Backup password</button>
+          <button onClick={fetchBalances}>
+            <img src={RefreshIcon} />
+          </button>
+          <button onClick={toggleBalancesVisible} className="img-button">
+            <img src={balancesVisible ? HideIcon : ShowIcon} />
+          </button>
+          <button onClick={logout}>Logout</button>
+        </div>
       </div>
 
       <h2 className="text-center">

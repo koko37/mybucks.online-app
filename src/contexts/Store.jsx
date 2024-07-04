@@ -35,6 +35,7 @@ export const StoreContext = createContext({
   nftBalances: [],
 
   nativeTokenPrice: 0,
+  tick: 0,
 
   fetchBalances: () => {},
 
@@ -66,6 +67,9 @@ const StoreProvider = ({ children }) => {
   // prices related
   const [nativeTokenPrice, setNativeTokenPrice] = useState(0);
 
+  // unique counter that increments regularly
+  const [tick, setTick] = useState(0);
+
   const [selectedTokenAddress, setSelectedTokenAddress] = useState("");
 
   useEffect(() => {
@@ -80,8 +84,11 @@ const StoreProvider = ({ children }) => {
     if (!account) {
       return;
     }
-    account.getGasPrice();
+    account.getGasPrice().then(() => {
+      setTick((_tick) => _tick + 1);
+    });
     fetchBalances();
+
     const intervalId = setInterval(() => {
       account
         .getGasPrice()
@@ -90,6 +97,9 @@ const StoreProvider = ({ children }) => {
         })
         .catch(() => {
           setConnectivity(false);
+        })
+        .finally(() => {
+          setTick((_tick) => _tick + 1);
         });
     }, 15000);
 
@@ -186,6 +196,7 @@ const StoreProvider = ({ children }) => {
         tokenBalances,
         nftBalances,
         nativeTokenPrice,
+        tick,
         fetchBalances,
         selectedTokenAddress,
         selectToken,
