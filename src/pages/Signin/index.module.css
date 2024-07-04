@@ -1,26 +1,14 @@
 .content {
   display: flex;
+  justify-content: center;
 
   @media only screen and (max-width: 1024px) {
-    flex-direction: column;
+    background-color: #EEE;
   }
-}
-
-.help {
-  width: 40%;
-
-  @media only screen and (max-width: 1024px) {
-    width: 100%;
-  }
-}
-
-.formula {
-  background-color: darkgrey;
-  color: white;
-  padding: 4px;
-  border-radius: 4px;
 }
 
 .form {
-  padding-left: 16px;
+  padding: 16px;
+  background-color: #EEE;
+  border-radius: 16px;
 }

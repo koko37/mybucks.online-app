@@ -52,7 +52,7 @@ const EvmHome = () => {
   const toggleBalancesVisible = () => {
     setBalancesVisible(!balancesVisible);
   };
-  const logout = () => {
+  const close = () => {
     reset();
     copy("");
   };
@@ -80,7 +80,7 @@ const EvmHome = () => {
           <button onClick={toggleBalancesVisible} className="img-button">
             <img src={balancesVisible ? HideIcon : ShowIcon} />
           </button>
-          <button onClick={logout}>Logout</button>
+          <button onClick={close}>Close</button>
         </div>
       </div>
 
