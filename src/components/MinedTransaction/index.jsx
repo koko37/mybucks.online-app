@@ -6,7 +6,7 @@ const MinedTransaction = ({ hash, back }) => {
   const { chainId } = useContext(StoreContext);
 
   return (
-    <div>
+    <div className="app">
       <div>
         <button onClick={back}>&lt; Back</button>
       </div>

@@ -47,7 +47,7 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
   };
 
   return (
-    <div>
+    <div className="app">
       <div>
         <button onClick={onReject} disabled={pending}>
           &lt; Back
