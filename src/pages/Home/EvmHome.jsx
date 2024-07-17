@@ -7,10 +7,10 @@ import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
 import { toast } from "react-toastify";
 
-import RefreshIcon from "@mybucks/assets/refresh.svg";
-import ShowIcon from "@mybucks/assets/show.svg";
-import HideIcon from "@mybucks/assets/hide.svg";
-import CopyIcon from "@mybucks/assets/copy.svg";
+import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
+import ShowIcon from "@mybucks/assets/icons/show.svg";
+import HideIcon from "@mybucks/assets/icons/hide.svg";
+import CopyIcon from "@mybucks/assets/icons/copy.svg";
 
 const EvmHome = () => {
   const {

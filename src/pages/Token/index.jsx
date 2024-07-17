@@ -4,7 +4,7 @@ import ConfirmTransaction from "@mybucks/components/ConfirmTransaction";
 import MinedTransaction from "@mybucks/components/MinedTransaction";
 import { ethers } from "ethers";
 import { explorerLinkOfContract } from "@mybucks/lib/utils";
-import RefreshIcon from "@mybucks/assets/refresh.svg";
+import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import s from "./index.module.css";
 
 const Token = () => {
