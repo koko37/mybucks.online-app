@@ -7,6 +7,8 @@ import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
 import { toast } from "react-toastify";
 
+import Button from "@mybucks/components/Button";
+
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import ShowIcon from "@mybucks/assets/icons/show.svg";
 import HideIcon from "@mybucks/assets/icons/hide.svg";
@@ -72,8 +74,8 @@ const EvmHome = () => {
         </div>
 
         <div className="flex">
-          <button onClick={backupPrivateKey}>Backup private key</button>
-          <button onClick={backupPassword}>Backup password</button>
+          <Button onClick={backupPrivateKey}>Backup private key</Button>
+          <Button onClick={backupPassword} disabled>Backup password</Button>
           <button onClick={fetchBalances}>
             <img src={RefreshIcon} />
           </button>

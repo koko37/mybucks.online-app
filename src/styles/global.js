@@ -69,10 +69,10 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.colors.gray50};
     font-family: ${({ theme }) =>
-      theme.fontsFamily.inter}, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      theme.fonts.inter}, -apple-system, BlinkMacSystemFont, "Segoe UI",
       "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
       "Helvetica Neue", sans-serif;
-    font-size: ${({ theme }) => theme.fonts.base};
+    font-size: ${({ theme }) => theme.sizes.base};
     font-weight: ${({ theme }) => theme.weights.base};
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

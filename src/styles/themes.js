@@ -15,8 +15,9 @@ const light = {
     regular: 500,
     highlight: 600,
     bold: 700,
+    extra: 800,
   },
-  fonts: {
+  sizes: {
     xs: "0.75rem",
     sm: "0.875rem",
     base: "1rem",
@@ -25,7 +26,7 @@ const light = {
     x2l: "2rem",
     x3l: "2.25rem",
   },
-  fontsFamily: {
+  fonts: {
     inter: "Inter",
   },
   radius: {

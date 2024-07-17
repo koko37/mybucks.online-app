@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
-import ConfirmTransaction from "@mybucks/components/ConfirmTransaction";
-import MinedTransaction from "@mybucks/components/MinedTransaction";
+import ConfirmTransaction from "@mybucks/pages/ConfirmTransaction";
+import MinedTransaction from "@mybucks/pages/MinedTransaction";
 import { ethers } from "ethers";
 import { explorerLinkOfContract } from "@mybucks/lib/utils";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
