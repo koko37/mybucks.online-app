@@ -3,7 +3,35 @@ import { Buffer } from "buffer";
 import { scrypt } from "scrypt-js";
 import { HASH_OPTIONS } from "@mybucks/lib/conf";
 import { StoreContext } from "@mybucks/contexts/Store";
+import { Container, Box } from "@mybucks/components/Containers";
 import Button from "@mybucks/components/Button";
+import { Label } from "@mybucks/components/Label";
+import { H1 } from "@mybucks/components/Texts";
+import styled from "styled-components";
+import media from "@mybucks/styles/media";
+
+const Title = styled(H1)`
+  text-align: center;
+  margin-bottom: 4px;
+
+  ${media.sm`
+    font-size: 1.75rem;
+    `}
+`;
+
+const Caption = styled.p`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.gray400};
+  font-size: ${({ theme }) => theme.sizes.base};
+  font-weight: ${({ theme }) => theme.weights.base};
+  line-height: 140%;
+  margin-bottom: ${({ theme }) => theme.sizes.x2l};
+
+  ${media.sm`
+    font-size: ${({ theme }) => theme.sizes.sm};
+      margin-bottom: ${({ theme }) => theme.sizes.xl};
+    `}
+`;
 
 const SignIn = () => {
   const [password, setPassword] = useState(
@@ -41,58 +69,64 @@ const SignIn = () => {
   }
 
   return (
-    <div>
+    <Container>
       <div>
         <div className="flex center">
           <img src="/logo.png" alt="mybucks.online" width="64" height="64" />
         </div>
-        <h2 className="text-center">Open your account</h2>
-        <p className="text-center mb-h">
-          Keep your password strong, and secure
-        </p>
-      </div>
-      <div>
-        <label htmlFor="password1">Password 1</label>
-        <input
-          id="password1"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password 1"
-          disabled={disabled}
-        />
       </div>
 
-      <div>
-        <label htmlFor="password2">Password 2</label>
-        <input
-          id="password2"
-          type="password"
-          value={salt}
-          onChange={(e) => setSalt(e.target.value)}
-          placeholder="Password 2"
-          disabled={disabled}
-        />
-      </div>
+      <Box>
+        <Title>Open your account</Title>
+        <Caption>Keep your password strong and secure</Caption>
 
-      <div>
-        <ul>
-          <li className="disabled">Min length: 12</li>
-          <li className="disabled">Uppercase (A~Z)</li>
-          <li className="disabled">Lowercase (a~z)</li>
-          <li className="disabled">Number (012~9)</li>
-          <li className="disabled">Special characters(!@#..)</li>
-          <li className="disabled">Don't forget!!!</li>
-        </ul>
-      </div>
+        <div>
+          <Label htmlFor="password1">Password 1</Label>
+          <input
+            id="password1"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password 1"
+            disabled={disabled}
+          />
+        </div>
 
-      <div>
-        <Button onClick={onSubmit} disabled={disabled || hasError} block>
-          Open
-        </Button>
-      </div>
+        <div>
+          <Label htmlFor="password2">Password 2</Label>
+          <input
+            id="password2"
+            type="password"
+            value={salt}
+            onChange={(e) => setSalt(e.target.value)}
+            placeholder="Password 2"
+            disabled={disabled}
+          />
+        </div>
+
+        <div>
+          <ul>
+            <li className="disabled">Min length: 12</li>
+            <li className="disabled">Uppercase (A~Z)</li>
+            <li className="disabled">Lowercase (a~z)</li>
+            <li className="disabled">Number (012~9)</li>
+            <li className="disabled">Special characters(!@#..)</li>
+            <li className="disabled">Don't forget!!!</li>
+          </ul>
+        </div>
+
+        <div>
+          <Button
+            onClick={onSubmit}
+            disabled={disabled || hasError}
+            size="block"
+          >
+            Open
+          </Button>
+        </div>
+      </Box>
       {!!progress && <div>progress: {progress}%</div>}
-    </div>
+    </Container>
   );
 };
 

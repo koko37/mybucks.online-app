@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { ethers } from "ethers";
-import s from "./index.module.css";
 import { gasMultiplier } from "@mybucks/lib/conf";
+import { Container, Box } from "@mybucks/components/Containers";
+import Button from "@mybucks/components/Button";
+import { H3 } from "@mybucks/components/Texts";
 
 const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
   const { account, fetchBalances, nativeTokenName, nativeTokenPrice } =
@@ -47,78 +49,79 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
   };
 
   return (
-    <div className="app">
+    <Container>
       <div>
         <button onClick={onReject} disabled={pending}>
           &lt; Back
         </button>
       </div>
+      <Box>
+        <H3>Confirm transaction</H3>
 
-      <h2>Confirm transaction</h2>
+        <div>
+          <p>To: {to}</p>
+          {!!value && <p>Value: {ethers.formatEther(value)}</p>}
+          <p>Data: {data}</p>
+        </div>
 
-      <div>
-        <p>To: {to}</p>
-        {!!value && <p>Value: {ethers.formatEther(value)}</p>}
-        <p className={s.txdata}>Data: {data}</p>
-      </div>
+        <div>
+          <fieldset disabled={pending}>
+            <legend>Select gas price:</legend>
+            <div>
+              <input
+                type="radio"
+                name="low"
+                id="low"
+                value="low"
+                checked={gasOption === "low"}
+                onChange={() => setGasOption("low")}
+              />
+              <label htmlFor="low">
+                Low / {ethers.formatUnits(account.gasPrice, 9)} GWei
+              </label>
+            </div>
 
-      <div>
-        <fieldset disabled={pending}>
-          <legend>Select gas price:</legend>
-          <div>
-            <input
-              type="radio"
-              name="low"
-              id="low"
-              value="low"
-              checked={gasOption === "low"}
-              onChange={() => setGasOption("low")}
-            />
-            <label htmlFor="low">
-              Low / {ethers.formatUnits(account.gasPrice, 9)} GWei
-            </label>
-          </div>
+            <div>
+              <input
+                type="radio"
+                name="average"
+                id="average"
+                value="average"
+                checked={gasOption === "average"}
+                onChange={() => setGasOption("average")}
+              />
+              <label htmlFor="average">Average (*1.5)</label>
+            </div>
 
-          <div>
-            <input
-              type="radio"
-              name="average"
-              id="average"
-              value="average"
-              checked={gasOption === "average"}
-              onChange={() => setGasOption("average")}
-            />
-            <label htmlFor="average">Average (*1.5)</label>
-          </div>
+            <div>
+              <input
+                type="radio"
+                name="high"
+                id="high"
+                value="high"
+                checked={gasOption === "high"}
+                onChange={() => setGasOption("high")}
+              />
+              <label htmlFor="high">High (*1.75)</label>
+            </div>
+          </fieldset>
+        </div>
 
-          <div>
-            <input
-              type="radio"
-              name="high"
-              id="high"
-              value="high"
-              checked={gasOption === "high"}
-              onChange={() => setGasOption("high")}
-            />
-            <label htmlFor="high">High (*1.75)</label>
-          </div>
-        </fieldset>
-      </div>
+        <div>
+          Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
+          {gasEstimationValue}
+        </div>
 
-      <div>
-        Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
-        {gasEstimationValue}
-      </div>
-
-      <div className="mt-h">
-        <button onClick={confirm} disabled={pending}>
-          Confirm
-        </button>
-        <button onClick={onReject} disabled={pending}>
-          Reject
-        </button>
-      </div>
-    </div>
+        <div className="mt-h">
+          <Button onClick={confirm} disabled={pending}>
+            Confirm
+          </Button>
+          <Button onClick={onReject} disabled={pending} $variant="secondary">
+            Reject
+          </Button>
+        </div>
+      </Box>
+    </Container>
   );
 };
 

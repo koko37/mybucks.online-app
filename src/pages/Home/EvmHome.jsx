@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
 import { toast } from "react-toastify";
 
+import { Container, Box } from "@mybucks/components/Containers";
 import Button from "@mybucks/components/Button";
 
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
@@ -60,7 +61,7 @@ const EvmHome = () => {
   };
 
   return (
-    <div className="app">
+    <Container>
       <div className="flex between">
         <div className="flex">
           <select onChange={changeChain} value={chainId}>
@@ -74,8 +75,12 @@ const EvmHome = () => {
         </div>
 
         <div className="flex">
-          <Button onClick={backupPrivateKey}>Backup private key</Button>
-          <Button onClick={backupPassword} disabled>Backup password</Button>
+          <Button onClick={backupPrivateKey} $size="small">
+            Backup private key
+          </Button>
+          <Button onClick={backupPassword} $size="small">
+            Backup password
+          </Button>
           <button onClick={fetchBalances}>
             <img src={RefreshIcon} />
           </button>
@@ -86,27 +91,30 @@ const EvmHome = () => {
         </div>
       </div>
 
-      <h2 className="text-center">
-        <a
-          href={explorerLinkOfAddress(chainId, account.address)}
-          target="_blank"
-        >
-          {truncate(account.address)}
-        </a>
-        <button onClick={copyAddress} className="img-button">
-          <img src={CopyIcon} />
-        </button>
-      </h2>
+      <Box>
+        <h2 className="text-center">
+          <a
+            href={explorerLinkOfAddress(chainId, account.address)}
+            target="_blank"
+          >
+            {truncate(account.address)}
+          </a>
 
-      <h1 className="text-center">
-        {loading
-          ? "???"
-          : !balancesVisible
-          ? "---"
-          : Number(nativeBalance).toFixed(4)}
-        &nbsp;
-        {nativeTokenName}
-      </h1>
+          <button onClick={copyAddress} className="img-button">
+            <img src={CopyIcon} />
+          </button>
+        </h2>
+
+        <h1 className="text-center">
+          {loading
+            ? "???"
+            : !balancesVisible
+            ? "---"
+            : Number(nativeBalance).toFixed(4)}
+          &nbsp;
+          {nativeTokenName}
+        </h1>
+      </Box>
 
       <div>
         {tokenBalances
@@ -128,7 +136,7 @@ const EvmHome = () => {
             />
           ))}
       </div>
-    </div>
+    </Container>
   );
 };
 

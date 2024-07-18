@@ -5,7 +5,10 @@ import MinedTransaction from "@mybucks/pages/MinedTransaction";
 import { ethers } from "ethers";
 import { explorerLinkOfContract } from "@mybucks/lib/utils";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
-import s from "./index.module.css";
+import { Container, Box } from "@mybucks/components/Containers";
+import Button from "@mybucks/components/Button";
+import { Label } from "@mybucks/components/Label";
+import { H3 } from "@mybucks/components/Texts";
 
 const Token = () => {
   const [hasError, setHasError] = useState(false);
@@ -106,7 +109,7 @@ const Token = () => {
   }
 
   return (
-    <div className="app">
+    <Container>
       <div className="flex">
         <button onClick={returnHome}>&lt; Home</button>
         <button onClick={fetchBalances}>
@@ -125,7 +128,6 @@ const Token = () => {
       <div>
         <p className="text-center">
           <img
-            className={s.logo}
             src={token.logoURI}
             alt={token.contractName}
             width="48"
@@ -140,51 +142,54 @@ const Token = () => {
         </h2>
         {!!token.quote && <p className="text-center">${token.quote}</p>}
       </div>
-
-      <div>
-        <h3>Send token to</h3>
-      </div>
-      <div>
-        <label htmlFor="recipient">Recipient</label>
-        <input
-          id="recipient"
-          type="text"
-          placeholder="Recipient address"
-          value={recipient}
-          onChange={(e) => setRecipient(e.target.value)}
-          className={s.address}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="amount">Amount</label>
-        <input
-          id="amount"
-          type="number"
-          placeholder="Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className={s.amount}
-        />
-        <button onClick={setMaxAmount}>Max</button>
-      </div>
-
-      {hasError ? (
-        <div>Invalid transfer</div>
-      ) : (
+      <Box>
         <div>
-          Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
-          {gasEstimationValue}
+          <H3>Send token to</H3>
         </div>
-      )}
-      <div>
-        <button onClick={sendToken} disabled={hasError}>
-          Submit
-        </button>
-      </div>
+        <div>
+          <Label htmlFor="recipient">Recipient</Label>
+          <input
+            id="recipient"
+            type="text"
+            placeholder="Recipient address"
+            value={recipient}
+            onChange={(e) => setRecipient(e.target.value)}
+          />
+        </div>
 
-      <h3 className="mt-h">History</h3>
-    </div>
+        <div>
+          <Label htmlFor="amount">Amount</Label>
+          <input
+            id="amount"
+            type="number"
+            placeholder="Amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          <Button onClick={setMaxAmount} $variant="outline">
+            Max
+          </Button>
+        </div>
+
+        {hasError ? (
+          <div>Invalid transfer</div>
+        ) : (
+          <div>
+            Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
+            {gasEstimationValue}
+          </div>
+        )}
+        <div>
+          <Button onClick={sendToken} disabled={hasError}>
+            Submit
+          </Button>
+        </div>
+      </Box>
+
+      <Box>
+        <H3>History</H3>
+      </Box>
+    </Container>
   );
 };
 

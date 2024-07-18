@@ -6,8 +6,6 @@ import { ThemeProvider } from "styled-components";
 import GlobalStyle from "@mybucks/styles/global.js";
 import themes from "@mybucks/styles/themes.js";
 
-// [TODO] Remove index.css
-import "@mybucks/index.css";
 import "@mybucks/styles/font.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(

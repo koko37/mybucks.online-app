@@ -18,6 +18,7 @@ const light = {
     extra: 800,
   },
   sizes: {
+    xxs: "0.5rem",
     xs: "0.75rem",
     sm: "0.875rem",
     base: "1rem",
@@ -25,6 +26,10 @@ const light = {
     xl: "1.5rem",
     x2l: "2rem",
     x3l: "2.25rem",
+    x4l: "2.5rem",
+    x5l: "3.75rem",
+    x6l: "5rem",
+    x9l: "52.875rem",
   },
   fonts: {
     inter: "Inter",

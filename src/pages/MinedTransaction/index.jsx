@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { explorerLinkOfTransaction, truncate } from "@mybucks/lib/utils";
+import { H3 } from "@mybucks/components/Texts";
 
 const MinedTransaction = ({ hash, back }) => {
   const { chainId } = useContext(StoreContext);
@@ -11,7 +12,7 @@ const MinedTransaction = ({ hash, back }) => {
         <button onClick={back}>&lt; Back</button>
       </div>
 
-      <h2>Transaction mined!</h2>
+      <H3>Transaction mined!</H3>
       <div>Hash: {truncate(hash)}</div>
       <div>
         <a href={explorerLinkOfTransaction(chainId, hash)} target="_blank">
