@@ -7,6 +7,7 @@ import { explorerLinkOfContract } from "@mybucks/lib/utils";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import { Container, Box } from "@mybucks/components/Containers";
 import Button from "@mybucks/components/Button";
+import Input from "@mybucks/components/Input";
 import { Label } from "@mybucks/components/Label";
 import { H3 } from "@mybucks/components/Texts";
 
@@ -148,7 +149,7 @@ const Token = () => {
         </div>
         <div>
           <Label htmlFor="recipient">Recipient</Label>
-          <input
+          <Input
             id="recipient"
             type="text"
             placeholder="Recipient address"
@@ -159,7 +160,7 @@ const Token = () => {
 
         <div>
           <Label htmlFor="amount">Amount</Label>
-          <input
+          <Input
             id="amount"
             type="number"
             placeholder="Amount"

@@ -3,12 +3,59 @@ import { Buffer } from "buffer";
 import { scrypt } from "scrypt-js";
 import { HASH_OPTIONS } from "@mybucks/lib/conf";
 import { StoreContext } from "@mybucks/contexts/Store";
-import { Container, Box } from "@mybucks/components/Containers";
+import { Box } from "@mybucks/components/Containers";
 import Button from "@mybucks/components/Button";
+import Input from "@mybucks/components/Input";
+import Checkbox from "@mybucks/components/Checkbox";
+import Progress from "@mybucks/components/Progress";
 import { Label } from "@mybucks/components/Label";
 import { H1 } from "@mybucks/components/Texts";
 import styled from "styled-components";
 import media from "@mybucks/styles/media";
+
+const Container = styled.div`
+  max-width: 40.5rem;
+  margin: 0 auto;
+  margin-block: 4rem 6.75rem;
+
+  @media (max-width: 696px) {
+    margin: 0 ${({ theme }) => theme.sizes.xl};
+    margin-block: ${({ theme }) => theme.sizes.x2l};
+  }
+`;
+
+const LogoWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.base};
+  margin-bottom: ${({ theme }) => theme.sizes.x4l};
+
+  img {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  ${media.sm`
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+
+    img {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  `}
+`;
+
+const LogoTitle = styled.h3`
+  font-size: ${({ theme }) => theme.sizes.x2l};
+  font-weight: ${({ theme }) => theme.weights.highlight};
+  color: ${({ theme }) => theme.colors.gray200};
+  line-height: 150%;
+
+  ${media.sm`
+    font-size: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
 
 const Title = styled(H1)`
   text-align: center;
@@ -31,6 +78,29 @@ const Caption = styled.p`
     font-size: ${({ theme }) => theme.sizes.sm};
       margin-bottom: ${({ theme }) => theme.sizes.xl};
     `}
+`;
+
+const CheckboxesWrapper = styled.div`
+  margin: 2rem 0;
+  display: flex;
+  flex-wrap: wrap;
+
+  & > div {
+    min-width: 50%;
+  }
+
+  ${media.sm`
+    flex-direction: column;
+  `}
+`;
+
+const ProgressWrapper = styled.div`
+  margin-top: ${({ theme }) => theme.sizes.x2l};
+  padding: 0 102px;
+
+  ${media.sm`
+    padding: 0 1.5rem;
+  `}
 `;
 
 const SignIn = () => {
@@ -70,11 +140,10 @@ const SignIn = () => {
 
   return (
     <Container>
-      <div>
-        <div className="flex center">
-          <img src="/logo.png" alt="mybucks.online" width="64" height="64" />
-        </div>
-      </div>
+      <LogoWrapper>
+        <img src="/logo-72x72.png" alt="mybucks.online" />
+        <LogoTitle>myBucks.online</LogoTitle>
+      </LogoWrapper>
 
       <Box>
         <Title>Open your account</Title>
@@ -82,7 +151,7 @@ const SignIn = () => {
 
         <div>
           <Label htmlFor="password1">Password 1</Label>
-          <input
+          <Input
             id="password1"
             type="password"
             value={password}
@@ -94,7 +163,7 @@ const SignIn = () => {
 
         <div>
           <Label htmlFor="password2">Password 2</Label>
-          <input
+          <Input
             id="password2"
             type="password"
             value={salt}
@@ -104,28 +173,29 @@ const SignIn = () => {
           />
         </div>
 
-        <div>
-          <ul>
-            <li className="disabled">Min length: 12</li>
-            <li className="disabled">Uppercase (A~Z)</li>
-            <li className="disabled">Lowercase (a~z)</li>
-            <li className="disabled">Number (012~9)</li>
-            <li className="disabled">Special characters(!@#..)</li>
-            <li className="disabled">Don't forget!!!</li>
-          </ul>
-        </div>
+        <CheckboxesWrapper>
+          <Checkbox>Min length: 12</Checkbox>
+          <Checkbox>Uppercase (A~Z)</Checkbox>
+          <Checkbox>Lowercase (a~z)</Checkbox>
+          <Checkbox>Number (012~9)</Checkbox>
+          <Checkbox>Special characters(!@#..)</Checkbox>
+          <Checkbox>Don't forget!!!</Checkbox>
+        </CheckboxesWrapper>
 
-        <div>
-          <Button
-            onClick={onSubmit}
-            disabled={disabled || hasError}
-            size="block"
-          >
-            Open
-          </Button>
-        </div>
+        <Button
+          onClick={onSubmit}
+          disabled={disabled || hasError}
+          $size="block"
+        >
+          Open
+        </Button>
       </Box>
-      {!!progress && <div>progress: {progress}%</div>}
+
+      {!!progress && (
+        <ProgressWrapper>
+          <Progress value={progress} max="100" />
+        </ProgressWrapper>
+      )}
     </Container>
   );
 };
