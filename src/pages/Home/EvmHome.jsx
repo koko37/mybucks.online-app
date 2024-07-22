@@ -6,6 +6,8 @@ import copy from "clipboard-copy";
 import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
 import { toast } from "react-toastify";
+import styled from "styled-components";
+import media from "@mybucks/styles/media";
 
 import { Container, Box } from "@mybucks/components/Containers";
 import Button from "@mybucks/components/Button";
@@ -14,6 +16,120 @@ import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import ShowIcon from "@mybucks/assets/icons/show.svg";
 import HideIcon from "@mybucks/assets/icons/hide.svg";
 import CopyIcon from "@mybucks/assets/icons/copy.svg";
+
+const NetworkAndFeatures = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.sizes.x4l};
+
+  ${media.md`
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const NetworkWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.x2l};
+`;
+
+const GasPriceWrapper = styled.div`
+  width: 5rem;
+  visibility: ${({ $show }) => ($show ? "visible" : "hidden")};
+`;
+
+const FeaturesWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.x2l};
+
+  ${media.md`
+    display: none;
+  `}
+`;
+
+const PrimaryBox = styled(Box).attrs({ $variant: "sm" })`
+  margin-bottom: ${({ theme }) => theme.sizes.x4l};
+
+  ${media.md`
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const AddressWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: ${({ theme }) => theme.sizes.xl};
+
+  ${media.sm`
+    justify-content: space-between;
+  `}
+`;
+
+const AddressAndCopy = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.xl};
+`;
+
+const AddressLink = styled.a`
+  color: ${({ theme }) => theme.colors.primary};
+  font-size: ${({ theme }) => theme.sizes.lg};
+  font-weight: ${({ theme }) => theme.weights.regular};
+  line-height: 120%;
+`;
+
+const AddressLong = styled.span`
+  display: inherit;
+  ${media.sm`
+    display: none;
+  `}
+`;
+
+const AddressShort = styled.span`
+  display: none;
+  ${media.sm`
+    display: inherit;
+  `}
+`;
+
+const RefreshAndEyeballs = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.xl};
+
+  ${media.sm`
+    position: relative;
+  `}
+`;
+
+const NativeBalance = styled.h3`
+  text-align: center;
+  font-weight: ${({ theme }) => theme.weights.highlight};
+  font-size: ${({ theme }) => theme.sizes.x2l};
+
+  ${media.sm`
+    font-size: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const FeaturesWrapper2 = styled.div`
+  display: none;
+
+  ${media.md`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: ${({ theme }) => theme.sizes.xl};
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
 
 const EvmHome = () => {
   const {
@@ -62,8 +178,8 @@ const EvmHome = () => {
 
   return (
     <Container>
-      <div className="flex between">
-        <div className="flex">
+      <NetworkAndFeatures>
+        <NetworkWrapper>
           <select onChange={changeChain} value={chainId}>
             {Object.values(NETWORKS).map(({ chainId: cId, label }) => (
               <option key={cId} value={cId}>
@@ -71,41 +187,52 @@ const EvmHome = () => {
               </option>
             ))}
           </select>
-          {gasPrice > 0 && <div>{gasPrice} GWei</div>}
-        </div>
+          <GasPriceWrapper $show={gasPrice > 0}>
+            {gasPrice} GWei
+          </GasPriceWrapper>
+        </NetworkWrapper>
 
-        <div className="flex">
+        <FeaturesWrapper>
           <Button onClick={backupPrivateKey} $size="small">
             Backup private key
           </Button>
           <Button onClick={backupPassword} $size="small">
             Backup password
           </Button>
-          <button onClick={fetchBalances}>
-            <img src={RefreshIcon} />
-          </button>
-          <button onClick={toggleBalancesVisible} className="img-button">
-            <img src={balancesVisible ? HideIcon : ShowIcon} />
-          </button>
-          <button onClick={close}>Close</button>
-        </div>
-      </div>
+        </FeaturesWrapper>
 
-      <Box>
-        <h2 className="text-center">
-          <a
-            href={explorerLinkOfAddress(chainId, account.address)}
-            target="_blank"
-          >
-            {truncate(account.address)}
-          </a>
+        <Button onClick={close} $size="small">
+          Close
+        </Button>
+      </NetworkAndFeatures>
 
-          <button onClick={copyAddress} className="img-button">
-            <img src={CopyIcon} />
-          </button>
-        </h2>
+      <PrimaryBox>
+        <AddressWrapper>
+          <AddressAndCopy>
+            <AddressLink
+              href={explorerLinkOfAddress(chainId, account.address)}
+              target="_blank"
+            >
+              <AddressLong>{truncate(account.address)}</AddressLong>
+              <AddressShort>{truncate(account.address, 6)}</AddressShort>
+            </AddressLink>
 
-        <h1 className="text-center">
+            <button onClick={copyAddress} className="img-button">
+              <img src={CopyIcon} />
+            </button>
+          </AddressAndCopy>
+
+          <RefreshAndEyeballs>
+            <button onClick={fetchBalances}>
+              <img src={RefreshIcon} />
+            </button>
+            <button onClick={toggleBalancesVisible} className="img-button">
+              <img src={balancesVisible ? HideIcon : ShowIcon} />
+            </button>
+          </RefreshAndEyeballs>
+        </AddressWrapper>
+
+        <NativeBalance>
           {loading
             ? "???"
             : !balancesVisible
@@ -113,8 +240,17 @@ const EvmHome = () => {
             : Number(nativeBalance).toFixed(4)}
           &nbsp;
           {nativeTokenName}
-        </h1>
-      </Box>
+        </NativeBalance>
+      </PrimaryBox>
+
+      <FeaturesWrapper2>
+        <Button onClick={backupPrivateKey} $size="small">
+          Backup private key
+        </Button>
+        <Button onClick={backupPassword} $size="small">
+          Backup password
+        </Button>
+      </FeaturesWrapper2>
 
       <div>
         {tokenBalances

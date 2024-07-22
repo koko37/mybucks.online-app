@@ -19,16 +19,16 @@ export const Container = styled.div`
 export const Box = styled.div`
   border-radius: ${({ theme }) => theme.radius.lg};
   background: ${({ theme }) => theme.colors.gray25};
-  padding: ${({ theme, variant }) =>
-    variant === "xs"
+  padding: ${({ theme, $variant }) =>
+    $variant === "xs"
       ? `${theme.sizes.base} ${theme.sizes.base}`
-      : variant === "sm"
+      : $variant === "sm"
       ? `${theme.sizes.xl} ${theme.sizes.xl}`
       : `${theme.sizes.x4l} ${theme.sizes.x5l}`};
 
   ${media.sm`
-      padding: ${({ theme, variant }) =>
-        variant === "xs"
+      padding: ${({ theme, $variant }) =>
+        $variant === "xs"
           ? `${theme.sizes.base} ${theme.sizes.base}`
           : `${theme.sizes.xl} ${theme.sizes.lg}`};
     `}
