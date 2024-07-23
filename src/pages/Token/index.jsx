@@ -88,6 +88,11 @@ const AmountWrapper = styled.div`
   }
 `;
 
+const MaxButton = styled(Button).attrs({ $variant: "outline" })`
+  font-size: ${({ theme }) => theme.sizes.sm};
+  line-height: 130%;
+`;
+
 const Token = () => {
   const [hasError, setHasError] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -235,9 +240,7 @@ const Token = () => {
       </TokenDetails>
 
       <Box>
-        <div>
-          <H3>Send token to</H3>
-        </div>
+        <H3>Send token to</H3>
 
         <Label htmlFor="recipient">Recipient</Label>
         <Input
@@ -257,9 +260,7 @@ const Token = () => {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          <Button onClick={setMaxAmount} $variant="outline">
-            Max
-          </Button>
+          <MaxButton onClick={setMaxAmount}>Max</MaxButton>
         </AmountWrapper>
 
         {hasError ? (
