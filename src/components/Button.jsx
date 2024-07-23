@@ -56,7 +56,7 @@ const Button = styled.button`
   }
 
   &:active:not(:disabled) {
-    background-color: ${({ theme }) => theme.colors.gray400};
+    background-color: ${({ theme }) => theme.colors.gray200};
     color: ${({ theme }) => theme.colors.gray25};
   }
 `;

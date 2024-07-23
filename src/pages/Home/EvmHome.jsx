@@ -1,7 +1,7 @@
 import React, { useContext, useState, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { NETWORKS } from "@mybucks/lib/conf";
-import TokenRow from "@mybucks/components/TokenRow";
+import TokenRow from "./TokenRow";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";

@@ -3,13 +3,90 @@ import { StoreContext } from "@mybucks/contexts/Store";
 import ConfirmTransaction from "@mybucks/pages/ConfirmTransaction";
 import MinedTransaction from "@mybucks/pages/MinedTransaction";
 import { ethers } from "ethers";
+import styled from "styled-components";
 import { explorerLinkOfContract } from "@mybucks/lib/utils";
+
+import BackIcon from "@mybucks/assets/icons/back.svg";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
-import { Container, Box } from "@mybucks/components/Containers";
+import ArrowUpRightIcon from "@mybucks/assets/icons/arrow-up-right.svg";
+
+import {
+  Container as BaseContainer,
+  Box as BaseBox,
+} from "@mybucks/components/Containers";
 import Button from "@mybucks/components/Button";
 import Input from "@mybucks/components/Input";
 import { Label } from "@mybucks/components/Label";
 import { H3 } from "@mybucks/components/Texts";
+
+const Container = styled(BaseContainer)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.xl};
+`;
+
+const Box = styled(BaseBox)`
+  width: 100%;
+`;
+
+const NavsWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const TokenDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: ${({ theme }) => theme.sizes.x3s};
+`;
+
+const LogoAndLink = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: ${({ theme }) => theme.sizes.x3s};
+`;
+
+const Logo = styled.img`
+  width: 51px;
+  height: 51px;
+  border-radius: 50%;
+`;
+
+const ArrowUpRight = styled.img.attrs({ src: ArrowUpRightIcon })`
+  width: 16px;
+`;
+
+const TokenBalance = styled.h5`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.base};
+  font-size: ${({ theme }) => theme.sizes.xl};
+  font-weight: ${({ theme }) => theme.weights.regular};
+  line-height: 120%;
+`;
+
+const TokenValue = styled.h6`
+  font-size: ${({ theme }) => theme.sizes.base};
+  font-weight: ${({ theme }) => theme.weights.highlight};
+  line-height: 150%;
+`;
+
+const AmountWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.x3s};
+  margin-bottom: ${({ theme }) => theme.sizes.xs};
+
+  input {
+    margin-bottom: 0;
+  }
+`;
 
 const Token = () => {
   const [hasError, setHasError] = useState(false);
@@ -111,55 +188,68 @@ const Token = () => {
 
   return (
     <Container>
-      <div className="flex">
-        <button onClick={returnHome}>&lt; Home</button>
+      <NavsWrapper>
+        <button onClick={returnHome}>
+          <img src={BackIcon} />
+        </button>
+
         <button onClick={fetchBalances}>
           <img src={RefreshIcon} />
         </button>
-        {!token.nativeToken && (
-          <a
-            href={explorerLinkOfContract(chainId, token.contractAddress)}
-            target="_blank"
-          >
-            <button>View contract</button>
-          </a>
-        )}
-      </div>
+      </NavsWrapper>
 
-      <div>
-        <p className="text-center">
-          <img
-            src={token.logoURI}
-            alt={token.contractName}
-            width="48"
-            height="48"
-          />
-        </p>
-        <p className="text-center">{token.contractName}</p>
-        <h2 className="text-center">
-          {loading ? "???" : Number(balance).toFixed(4)}
+      <TokenDetails>
+        <LogoAndLink>
+          {!token.nativeToken && (
+            <ArrowUpRight style={{ visibility: "hidden" }} />
+          )}
+          {token.nativeToken ? (
+            <Logo src={token.logoURI} alt={token.contractTickerSymbol} />
+          ) : (
+            <a
+              href={explorerLinkOfContract(chainId, token.contractAddress)}
+              target="_blank"
+            >
+              <Logo src={token.logoURI} alt={token.contractTickerSymbol} />
+            </a>
+          )}
+          {!token.nativeToken && (
+            <a
+              href={explorerLinkOfContract(chainId, token.contractAddress)}
+              target="_blank"
+            >
+              <ArrowUpRight />
+            </a>
+          )}
+        </LogoAndLink>
+
+        <TokenBalance>
+          {loading ? "---" : Number(balance).toFixed(4)}
           &nbsp;
-          <span className="secondary">{token.contractTickerSymbol}</span>
-        </h2>
-        {!!token.quote && <p className="text-center">${token.quote}</p>}
-      </div>
+          {token.contractTickerSymbol}
+        </TokenBalance>
+
+        {!!token.quote && (
+          <TokenValue>${Number(token.quote).toFixed(4)} USD</TokenValue>
+        )}
+      </TokenDetails>
+
       <Box>
         <div>
           <H3>Send token to</H3>
         </div>
-        <div>
-          <Label htmlFor="recipient">Recipient</Label>
-          <Input
-            id="recipient"
-            type="text"
-            placeholder="Recipient address"
-            value={recipient}
-            onChange={(e) => setRecipient(e.target.value)}
-          />
-        </div>
 
-        <div>
-          <Label htmlFor="amount">Amount</Label>
+        <Label htmlFor="recipient">Recipient</Label>
+        <Input
+          id="recipient"
+          type="text"
+          placeholder="Recipient address"
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+        />
+
+        <Label htmlFor="amount">Amount</Label>
+        <AmountWrapper>
           <Input
             id="amount"
             type="number"
@@ -170,7 +260,7 @@ const Token = () => {
           <Button onClick={setMaxAmount} $variant="outline">
             Max
           </Button>
-        </div>
+        </AmountWrapper>
 
         {hasError ? (
           <div>Invalid transfer</div>
