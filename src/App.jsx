@@ -4,6 +4,7 @@ import { useIdleTimer } from "react-idle-timer";
 import { toast } from "react-toastify";
 import { IDLE_DURATION } from "./lib/conf";
 import { StoreContext } from "./contexts/Store";
+import styled from "styled-components";
 
 import Landing from "@mybucks/pages/Landing";
 import SignIn from "@mybucks/pages/Signin";
@@ -11,6 +12,10 @@ import Home from "@mybucks/pages/Home";
 import Token from "./pages/Token";
 
 import "react-toastify/dist/ReactToastify.css";
+
+const AppWrapper = styled.div`
+  position: relative;
+`;
 
 function App() {
   const { connectivity, hash, account, selectedTokenAddress, reset } =
@@ -31,7 +36,7 @@ function App() {
   }
 
   return (
-    <div>
+    <AppWrapper>
       {!connectivity && (
         <div className="border border-rounded">
           Please check your internet connection!
@@ -49,7 +54,7 @@ function App() {
         hideProgressBar={true}
         theme="light"
       />
-    </div>
+    </AppWrapper>
   );
 }
 

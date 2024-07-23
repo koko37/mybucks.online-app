@@ -94,12 +94,26 @@ const CheckboxesWrapper = styled.div`
   `}
 `;
 
-const ProgressWrapper = styled.div`
+const DesktopProgressWrapper = styled.div`
   margin-top: ${({ theme }) => theme.sizes.x2l};
   padding: 0 102px;
 
   ${media.sm`
-    padding: 0 1.5rem;
+    display: none;
+  `}
+`;
+
+const MobileProgressWrapper = styled.div`
+  display: none;
+
+  ${media.sm`
+    position: fixed;
+    inset: 0;
+    background: #FFFE;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
   `}
 `;
 
@@ -139,64 +153,72 @@ const SignIn = () => {
   }
 
   return (
-    <Container>
-      <LogoWrapper>
-        <img src="/logo-72x72.png" alt="mybucks.online" />
-        <LogoTitle>myBucks.online</LogoTitle>
-      </LogoWrapper>
+    <>
+      <Container>
+        <LogoWrapper>
+          <img src="/logo-72x72.png" alt="mybucks.online" />
+          <LogoTitle>myBucks.online</LogoTitle>
+        </LogoWrapper>
 
-      <Box>
-        <Title>Open your account</Title>
-        <Caption>Keep your password strong and secure</Caption>
+        <Box>
+          <Title>Open your account</Title>
+          <Caption>Keep your password strong and secure</Caption>
 
-        <div>
-          <Label htmlFor="password1">Password 1</Label>
-          <Input
-            id="password1"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password 1"
-            disabled={disabled}
-          />
-        </div>
+          <div>
+            <Label htmlFor="password1">Password 1</Label>
+            <Input
+              id="password1"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password 1"
+              disabled={disabled}
+            />
+          </div>
 
-        <div>
-          <Label htmlFor="password2">Password 2</Label>
-          <Input
-            id="password2"
-            type="password"
-            value={salt}
-            onChange={(e) => setSalt(e.target.value)}
-            placeholder="Password 2"
-            disabled={disabled}
-          />
-        </div>
+          <div>
+            <Label htmlFor="password2">Password 2</Label>
+            <Input
+              id="password2"
+              type="password"
+              value={salt}
+              onChange={(e) => setSalt(e.target.value)}
+              placeholder="Password 2"
+              disabled={disabled}
+            />
+          </div>
 
-        <CheckboxesWrapper>
-          <Checkbox>Min length: 12</Checkbox>
-          <Checkbox>Uppercase (A~Z)</Checkbox>
-          <Checkbox>Lowercase (a~z)</Checkbox>
-          <Checkbox>Number (012~9)</Checkbox>
-          <Checkbox>Special characters(!@#..)</Checkbox>
-          <Checkbox>Don't forget!!!</Checkbox>
-        </CheckboxesWrapper>
+          <CheckboxesWrapper>
+            <Checkbox>Min length: 12</Checkbox>
+            <Checkbox>Uppercase (A~Z)</Checkbox>
+            <Checkbox>Lowercase (a~z)</Checkbox>
+            <Checkbox>Number (012~9)</Checkbox>
+            <Checkbox>Special characters(!@#..)</Checkbox>
+            <Checkbox>Don't forget!!!</Checkbox>
+          </CheckboxesWrapper>
 
-        <Button
-          onClick={onSubmit}
-          disabled={disabled || hasError}
-          $size="block"
-        >
-          Open
-        </Button>
-      </Box>
+          <Button
+            onClick={onSubmit}
+            disabled={disabled || hasError}
+            $size="block"
+          >
+            Open
+          </Button>
+        </Box>
+
+        {!!progress && (
+          <DesktopProgressWrapper>
+            <Progress value={progress} max="100" />
+          </DesktopProgressWrapper>
+        )}
+      </Container>
 
       {!!progress && (
-        <ProgressWrapper>
+        <MobileProgressWrapper>
           <Progress value={progress} max="100" />
-        </ProgressWrapper>
+        </MobileProgressWrapper>
       )}
-    </Container>
+    </>
   );
 };
 
