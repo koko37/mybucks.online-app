@@ -123,6 +123,14 @@ const EstimatedGasFee = styled(InvalidTransfer)`
   border: 1px solid ${({ theme }) => theme.colors.success};
 `;
 
+const Submit = styled(Button)`
+  width: 17rem;
+
+  ${media.sm`
+    width: 100%;
+  `}
+`;
+
 const Token = () => {
   const [hasError, setHasError] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -315,14 +323,10 @@ const Token = () => {
         ) : (
           <></>
         )}
-        <div>
-          <Button
-            onClick={sendToken}
-            disabled={hasError || gasEstimation === 0}
-          >
-            Submit
-          </Button>
-        </div>
+
+        <Submit onClick={sendToken} disabled={hasError || gasEstimation === 0}>
+          Submit
+        </Submit>
       </Box>
 
       <Box>
