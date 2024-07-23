@@ -10,13 +10,15 @@ import styled from "styled-components";
 import media from "@mybucks/styles/media";
 
 import { Container, Box } from "@mybucks/components/Containers";
-import Button from "@mybucks/components/Button";
+import BaseButton from "@mybucks/components/Button";
+import Select from "@mybucks/components/Select";
 
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import ShowIcon from "@mybucks/assets/icons/show.svg";
 import HideIcon from "@mybucks/assets/icons/hide.svg";
 import CopyIcon from "@mybucks/assets/icons/copy.svg";
 import GasIcon from "@mybucks/assets/icons/gas.svg";
+import LockIcon from "@mybucks/assets/icons/lock.svg";
 
 const NetworkAndFeatures = styled.div`
   display: flex;
@@ -57,6 +59,15 @@ const FeaturesWrapper = styled.div`
   ${media.md`
     display: none;
   `}
+`;
+
+const Button = styled(BaseButton)`
+  line-height: 180%;
+`
+
+const CloseButton = styled(BaseButton).attrs({ $size: "small" })`
+  display: flex;
+  padding: 6px 8px;
 `;
 
 const PrimaryBox = styled(Box).attrs({ $variant: "sm" })`
@@ -197,13 +208,13 @@ const EvmHome = () => {
     <Container>
       <NetworkAndFeatures>
         <NetworkWrapper>
-          <select onChange={changeChain} value={chainId}>
+          <Select onChange={changeChain} value={chainId}>
             {Object.values(NETWORKS).map(({ chainId: cId, label }) => (
               <option key={cId} value={cId}>
                 {label}
               </option>
             ))}
-          </select>
+          </Select>
           <GasPriceWrapper $show={gasPrice > 0}>
             <img src={GasIcon} /> <span>{gasPrice} GWei</span>
           </GasPriceWrapper>
@@ -218,9 +229,9 @@ const EvmHome = () => {
           </Button>
         </FeaturesWrapper>
 
-        <Button onClick={close} $size="small">
-          Close
-        </Button>
+        <CloseButton onClick={close}>
+          <img src={LockIcon} />
+        </CloseButton>
       </NetworkAndFeatures>
 
       <PrimaryBox>

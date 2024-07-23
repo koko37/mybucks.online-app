@@ -108,7 +108,7 @@ const TokenRow = ({ token, balance, quote, onClick, balanceVisible }) => (
           ? `\$${Number(quote).toFixed(2)}`
           : !balanceVisible
           ? "*****"
-          : "  "}
+          : ""}
       </Value>
     </BalanceAndValueWrap>
   </Wrap>
