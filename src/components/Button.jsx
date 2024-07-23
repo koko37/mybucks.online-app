@@ -11,7 +11,7 @@ const Button = styled.button`
       ? css`
           font-size: ${({ theme }) => theme.sizes.xs};
           font-weight: ${({ theme }) => theme.weights.regular};
-          padding: ${({ theme }) => `${theme.sizes.xxxs} ${theme.sizes.xl}`};
+          padding: ${({ theme }) => `${theme.sizes.x3s} ${theme.sizes.xl}`};
         `
       : $size === "block"
       ? css`

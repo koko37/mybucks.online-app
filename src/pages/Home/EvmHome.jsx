@@ -16,6 +16,7 @@ import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import ShowIcon from "@mybucks/assets/icons/show.svg";
 import HideIcon from "@mybucks/assets/icons/hide.svg";
 import CopyIcon from "@mybucks/assets/icons/copy.svg";
+import GasIcon from "@mybucks/assets/icons/gas.svg";
 
 const NetworkAndFeatures = styled.div`
   display: flex;
@@ -32,11 +33,20 @@ const NetworkWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.sizes.x2l};
+
+  ${media.md`
+    gap: ${({ theme }) => theme.sizes.base};
+  `}
 `;
 
 const GasPriceWrapper = styled.div`
-  width: 5rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 6rem;
   visibility: ${({ $show }) => ($show ? "visible" : "hidden")};
+  font-weight: ${({ theme }) => theme.weights.regular};
+  font-size: ${({ theme }) => theme.sizes.sm};
 `;
 
 const FeaturesWrapper = styled.div`
@@ -80,6 +90,7 @@ const AddressLink = styled.a`
   font-size: ${({ theme }) => theme.sizes.lg};
   font-weight: ${({ theme }) => theme.weights.regular};
   line-height: 120%;
+  text-decoration: underline;
 `;
 
 const AddressLong = styled.span`
@@ -129,6 +140,12 @@ const FeaturesWrapper2 = styled.div`
     gap: ${({ theme }) => theme.sizes.xl};
     margin-bottom: ${({ theme }) => theme.sizes.xl};
   `}
+`;
+
+const TokensList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.sizes.lg};
 `;
 
 const EvmHome = () => {
@@ -188,7 +205,7 @@ const EvmHome = () => {
             ))}
           </select>
           <GasPriceWrapper $show={gasPrice > 0}>
-            {gasPrice} GWei
+            <img src={GasIcon} /> <span>{gasPrice} GWei</span>
           </GasPriceWrapper>
         </NetworkWrapper>
 
@@ -234,9 +251,9 @@ const EvmHome = () => {
 
         <NativeBalance>
           {loading
-            ? "???"
+            ? "-----"
             : !balancesVisible
-            ? "---"
+            ? "*****"
             : Number(nativeBalance).toFixed(4)}
           &nbsp;
           {nativeTokenName}
@@ -252,7 +269,7 @@ const EvmHome = () => {
         </Button>
       </FeaturesWrapper2>
 
-      <div>
+      <TokensList>
         {tokenBalances
           .filter((t) => !!t.nativeToken)
           .concat(tokenBalances.filter((t) => !t.nativeToken))
@@ -271,7 +288,7 @@ const EvmHome = () => {
               onClick={() => selectToken(t.contractAddress)}
             />
           ))}
-      </div>
+      </TokensList>
     </Container>
   );
 };

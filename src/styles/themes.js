@@ -18,8 +18,8 @@ const light = {
     extra: 800,
   },
   sizes: {
-    xxxs: "0.5rem",
-    xxs: "0.625rem",
+    x3s: "0.5rem",
+    x2s: "0.625rem",
     xs: "0.75rem",
     sm: "0.875rem",
     base: "1rem",
