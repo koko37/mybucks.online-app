@@ -9,6 +9,8 @@ import { explorerLinkOfContract } from "@mybucks/lib/utils";
 import BackIcon from "@mybucks/assets/icons/back.svg";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import ArrowUpRightIcon from "@mybucks/assets/icons/arrow-up-right.svg";
+import InfoRedIcon from "@mybucks/assets/icons/info-red.svg";
+import InfoGreenIcon from "@mybucks/assets/icons/info-green.svg";
 
 import {
   Container as BaseContainer,
@@ -18,6 +20,7 @@ import Button from "@mybucks/components/Button";
 import Input from "@mybucks/components/Input";
 import { Label } from "@mybucks/components/Label";
 import { H3 } from "@mybucks/components/Texts";
+import media from "@mybucks/styles/media";
 
 const Container = styled(BaseContainer)`
   display: flex;
@@ -81,16 +84,43 @@ const AmountWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.sizes.x3s};
-  margin-bottom: ${({ theme }) => theme.sizes.xs};
+  margin-bottom: ${({ theme }) => theme.sizes.x2l};
 
   input {
     margin-bottom: 0;
   }
+
+  ${media.sm`
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
 `;
 
 const MaxButton = styled(Button).attrs({ $variant: "outline" })`
   font-size: ${({ theme }) => theme.sizes.sm};
   line-height: 130%;
+`;
+
+const InvalidTransfer = styled.div`
+  padding: 0.25rem 0.625rem;
+  border-radius: ${({ theme }) => theme.sizes.x3s};
+  color: ${({ theme }) => theme.colors.error};
+  border: 1px solid ${({ theme }) => theme.colors.error};
+  margin-bottom: ${({ theme }) => theme.sizes.x2l};
+  font-weight: ${({ theme }) => theme.weights.base};
+  font-size: ${({ theme }) => theme.sizes.xs};
+  line-height: 180%;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.x2s};
+
+  ${media.sm`
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const EstimatedGasFee = styled(InvalidTransfer)`
+  color: ${({ theme }) => theme.colors.success};
+  border: 1px solid ${({ theme }) => theme.colors.success};
 `;
 
 const Token = () => {
@@ -126,6 +156,12 @@ const Token = () => {
 
   useEffect(() => {
     const estimateGas = async () => {
+      if (!recipient && !amount) {
+        setHasError(false);
+        setGasEstimation(0);
+        return;
+      }
+
       if (!recipient || !ethers.isAddress(recipient) || !amount || !token) {
         setHasError(true);
         setGasEstimation(0);
@@ -264,15 +300,26 @@ const Token = () => {
         </AmountWrapper>
 
         {hasError ? (
-          <div>Invalid transfer</div>
+          <InvalidTransfer>
+            <img src={InfoRedIcon} />
+            <span>Invalid transfer</span>
+          </InvalidTransfer>
+        ) : gasEstimation > 0 ? (
+          <EstimatedGasFee>
+            <img src={InfoGreenIcon} />
+            <span>
+              Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
+              {gasEstimationValue}
+            </span>
+          </EstimatedGasFee>
         ) : (
-          <div>
-            Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
-            {gasEstimationValue}
-          </div>
+          <></>
         )}
         <div>
-          <Button onClick={sendToken} disabled={hasError}>
+          <Button
+            onClick={sendToken}
+            disabled={hasError || gasEstimation === 0}
+          >
             Submit
           </Button>
         </div>
