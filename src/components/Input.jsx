@@ -22,7 +22,7 @@ const Input = styled.input`
 
   &:active,
   &:focus {
-    color: ${({ theme }) => theme.colors.gray400};
+    color: ${({ theme }) => theme.colors.primary};
     border: 1px solid ${({ theme }) => theme.colors.primary};
   }
 
