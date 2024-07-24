@@ -1,11 +1,135 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
-import ConfirmTransaction from "@mybucks/components/ConfirmTransaction";
-import MinedTransaction from "@mybucks/components/MinedTransaction";
+import ConfirmTransaction from "@mybucks/pages/ConfirmTransaction";
+import MinedTransaction from "@mybucks/pages/MinedTransaction";
 import { ethers } from "ethers";
+import styled from "styled-components";
 import { explorerLinkOfContract } from "@mybucks/lib/utils";
-import RefreshIcon from "@mybucks/assets/refresh.svg";
-import s from "./index.module.css";
+
+import BackIcon from "@mybucks/assets/icons/back.svg";
+import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
+import ArrowUpRightIcon from "@mybucks/assets/icons/arrow-up-right.svg";
+import InfoRedIcon from "@mybucks/assets/icons/info-red.svg";
+import InfoGreenIcon from "@mybucks/assets/icons/info-green.svg";
+
+import {
+  Container as BaseContainer,
+  Box as BaseBox,
+} from "@mybucks/components/Containers";
+import Button from "@mybucks/components/Button";
+import Input from "@mybucks/components/Input";
+import { Label } from "@mybucks/components/Label";
+import { H3 } from "@mybucks/components/Texts";
+import media from "@mybucks/styles/media";
+
+const Container = styled(BaseContainer)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.xl};
+`;
+
+const Box = styled(BaseBox)`
+  width: 100%;
+`;
+
+const NavsWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const TokenDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: ${({ theme }) => theme.sizes.x3s};
+`;
+
+const LogoAndLink = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: ${({ theme }) => theme.sizes.x3s};
+`;
+
+const Logo = styled.img`
+  width: 51px;
+  height: 51px;
+  border-radius: 50%;
+`;
+
+const ArrowUpRight = styled.img.attrs({ src: ArrowUpRightIcon })`
+  width: 16px;
+`;
+
+const TokenBalance = styled.h5`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.base};
+  font-size: ${({ theme }) => theme.sizes.xl};
+  font-weight: ${({ theme }) => theme.weights.regular};
+  line-height: 120%;
+`;
+
+const TokenValue = styled.h6`
+  font-size: ${({ theme }) => theme.sizes.base};
+  font-weight: ${({ theme }) => theme.weights.highlight};
+  line-height: 150%;
+`;
+
+const AmountWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.x3s};
+  margin-bottom: ${({ theme }) => theme.sizes.x2l};
+
+  input {
+    margin-bottom: 0;
+  }
+
+  ${media.sm`
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const MaxButton = styled(Button).attrs({ $variant: "outline" })`
+  font-size: ${({ theme }) => theme.sizes.sm};
+  line-height: 130%;
+`;
+
+const InvalidTransfer = styled.div`
+  padding: 0.25rem 0.625rem;
+  border-radius: ${({ theme }) => theme.sizes.x3s};
+  color: ${({ theme }) => theme.colors.error};
+  border: 1px solid ${({ theme }) => theme.colors.error};
+  margin-bottom: ${({ theme }) => theme.sizes.x2l};
+  font-weight: ${({ theme }) => theme.weights.base};
+  font-size: ${({ theme }) => theme.sizes.xs};
+  line-height: 180%;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.x2s};
+
+  ${media.sm`
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const EstimatedGasFee = styled(InvalidTransfer)`
+  color: ${({ theme }) => theme.colors.success};
+  border: 1px solid ${({ theme }) => theme.colors.success};
+`;
+
+const Submit = styled(Button)`
+  width: 17rem;
+
+  ${media.sm`
+    width: 100%;
+  `}
+`;
 
 const Token = () => {
   const [hasError, setHasError] = useState(false);
@@ -40,7 +164,13 @@ const Token = () => {
 
   useEffect(() => {
     const estimateGas = async () => {
-      if (!recipient || !ethers.isAddress(recipient) || !amount || !token) {
+      if (!recipient || !amount) {
+        setHasError(false);
+        setGasEstimation(0);
+        return;
+      }
+
+      if (!ethers.isAddress(recipient) || amount < 0 || !token) {
         setHasError(true);
         setGasEstimation(0);
         return;
@@ -106,85 +236,103 @@ const Token = () => {
   }
 
   return (
-    <div className="app">
-      <div className="flex">
-        <button onClick={returnHome}>&lt; Home</button>
+    <Container>
+      <NavsWrapper>
+        <button onClick={returnHome}>
+          <img src={BackIcon} />
+        </button>
+
         <button onClick={fetchBalances}>
           <img src={RefreshIcon} />
         </button>
-        {!token.nativeToken && (
-          <a
-            href={explorerLinkOfContract(chainId, token.contractAddress)}
-            target="_blank"
-          >
-            <button>View contract</button>
-          </a>
-        )}
-      </div>
+      </NavsWrapper>
 
-      <div>
-        <p className="text-center">
-          <img
-            className={s.logo}
-            src={token.logoURI}
-            alt={token.contractName}
-            width="48"
-            height="48"
-          />
-        </p>
-        <p className="text-center">{token.contractName}</p>
-        <h2 className="text-center">
-          {loading ? "???" : Number(balance).toFixed(4)}
+      <TokenDetails>
+        <LogoAndLink>
+          {!token.nativeToken && (
+            <ArrowUpRight style={{ visibility: "hidden" }} />
+          )}
+          {token.nativeToken ? (
+            <Logo src={token.logoURI} alt={token.contractTickerSymbol} />
+          ) : (
+            <a
+              href={explorerLinkOfContract(chainId, token.contractAddress)}
+              target="_blank"
+            >
+              <Logo src={token.logoURI} alt={token.contractTickerSymbol} />
+            </a>
+          )}
+          {!token.nativeToken && (
+            <a
+              href={explorerLinkOfContract(chainId, token.contractAddress)}
+              target="_blank"
+            >
+              <ArrowUpRight />
+            </a>
+          )}
+        </LogoAndLink>
+
+        <TokenBalance>
+          {loading ? "---" : Number(balance).toFixed(4)}
           &nbsp;
-          <span className="secondary">{token.contractTickerSymbol}</span>
-        </h2>
-        {!!token.quote && <p className="text-center">${token.quote}</p>}
-      </div>
+          {token.contractTickerSymbol}
+        </TokenBalance>
 
-      <div>
-        <h3>Send token to</h3>
-      </div>
-      <div>
-        <label htmlFor="recipient">Recipient</label>
-        <input
+        {!!token.quote && (
+          <TokenValue>${Number(token.quote).toFixed(4)} USD</TokenValue>
+        )}
+      </TokenDetails>
+
+      <Box>
+        <H3>Send token to</H3>
+
+        <Label htmlFor="recipient">Recipient</Label>
+        <Input
           id="recipient"
           type="text"
           placeholder="Recipient address"
           value={recipient}
           onChange={(e) => setRecipient(e.target.value)}
-          className={s.address}
         />
-      </div>
 
-      <div>
-        <label htmlFor="amount">Amount</label>
-        <input
-          id="amount"
-          type="number"
-          placeholder="Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className={s.amount}
-        />
-        <button onClick={setMaxAmount}>Max</button>
-      </div>
+        <Label htmlFor="amount">Amount</Label>
+        <AmountWrapper>
+          <Input
+            id="amount"
+            type="number"
+            placeholder="Amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+          <MaxButton onClick={setMaxAmount}>Max</MaxButton>
+        </AmountWrapper>
 
-      {hasError ? (
-        <div>Invalid transfer</div>
-      ) : (
-        <div>
-          Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
-          {gasEstimationValue}
-        </div>
-      )}
-      <div>
-        <button onClick={sendToken} disabled={hasError}>
+        {hasError ? (
+          <InvalidTransfer>
+            <img src={InfoRedIcon} />
+            <span>Invalid transfer</span>
+          </InvalidTransfer>
+        ) : gasEstimation > 0 ? (
+          <EstimatedGasFee>
+            <img src={InfoGreenIcon} />
+            <span>
+              Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
+              {gasEstimationValue}
+            </span>
+          </EstimatedGasFee>
+        ) : (
+          <></>
+        )}
+
+        <Submit onClick={sendToken} disabled={hasError || gasEstimation === 0}>
           Submit
-        </button>
-      </div>
+        </Submit>
+      </Box>
 
-      <h3 className="mt-h">History</h3>
-    </div>
+      <Box>
+        <H3>History</H3>
+      </Box>
+    </Container>
   );
 };
 

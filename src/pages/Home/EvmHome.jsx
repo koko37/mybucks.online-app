@@ -1,16 +1,160 @@
 import React, { useContext, useState, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { NETWORKS } from "@mybucks/lib/conf";
-import TokenRow from "@mybucks/components/TokenRow";
+import TokenRow from "./TokenRow";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
 import { toast } from "react-toastify";
+import styled from "styled-components";
+import media from "@mybucks/styles/media";
 
-import RefreshIcon from "@mybucks/assets/refresh.svg";
-import ShowIcon from "@mybucks/assets/show.svg";
-import HideIcon from "@mybucks/assets/hide.svg";
-import CopyIcon from "@mybucks/assets/copy.svg";
+import { Container, Box } from "@mybucks/components/Containers";
+import BaseButton from "@mybucks/components/Button";
+import Select from "@mybucks/components/Select";
+import Link from "@mybucks/components/Link";
+
+import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
+import ShowIcon from "@mybucks/assets/icons/show.svg";
+import HideIcon from "@mybucks/assets/icons/hide.svg";
+import CopyIcon from "@mybucks/assets/icons/copy.svg";
+import GasIcon from "@mybucks/assets/icons/gas.svg";
+import LockIcon from "@mybucks/assets/icons/lock.svg";
+
+const NetworkAndFeatures = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.sizes.x4l};
+
+  ${media.md`
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const NetworkWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.x2l};
+
+  ${media.md`
+    gap: ${({ theme }) => theme.sizes.base};
+  `}
+`;
+
+const GasPriceWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 6rem;
+  visibility: ${({ $show }) => ($show ? "visible" : "hidden")};
+  font-weight: ${({ theme }) => theme.weights.regular};
+  font-size: ${({ theme }) => theme.sizes.sm};
+`;
+
+const FeaturesWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.x2l};
+
+  ${media.md`
+    display: none;
+  `}
+`;
+
+const Button = styled(BaseButton)`
+  line-height: 180%;
+`;
+
+const CloseButton = styled(BaseButton).attrs({ $size: "small" })`
+  display: flex;
+  padding: 6px 8px;
+`;
+
+const PrimaryBox = styled(Box).attrs({ $variant: "sm" })`
+  margin-bottom: ${({ theme }) => theme.sizes.x4l};
+
+  ${media.md`
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const AddressWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: ${({ theme }) => theme.sizes.xl};
+
+  ${media.sm`
+    justify-content: space-between;
+  `}
+`;
+
+const AddressAndCopy = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.xl};
+`;
+
+const AddressLink = styled(Link)`
+  font-size: ${({ theme }) => theme.sizes.lg};
+`;
+
+const AddressLong = styled.span`
+  display: inherit;
+  ${media.sm`
+    display: none;
+  `}
+`;
+
+const AddressShort = styled.span`
+  display: none;
+  ${media.sm`
+    display: inherit;
+  `}
+`;
+
+const RefreshAndEyeballs = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.xl};
+
+  ${media.sm`
+    position: relative;
+  `}
+`;
+
+const NativeBalance = styled.h3`
+  text-align: center;
+  font-weight: ${({ theme }) => theme.weights.highlight};
+  font-size: ${({ theme }) => theme.sizes.x2l};
+
+  ${media.sm`
+    font-size: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const FeaturesWrapper2 = styled.div`
+  display: none;
+
+  ${media.md`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: ${({ theme }) => theme.sizes.xl};
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
+`;
+
+const TokensList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.sizes.lg};
+`;
 
 const EvmHome = () => {
   const {
@@ -58,55 +202,82 @@ const EvmHome = () => {
   };
 
   return (
-    <div className="app">
-      <div className="flex between">
-        <div className="flex">
-          <select onChange={changeChain} value={chainId}>
+    <Container>
+      <NetworkAndFeatures>
+        <NetworkWrapper>
+          <Select onChange={changeChain} value={chainId}>
             {Object.values(NETWORKS).map(({ chainId: cId, label }) => (
               <option key={cId} value={cId}>
                 {label}
               </option>
             ))}
-          </select>
-          {gasPrice > 0 && <div>{gasPrice} GWei</div>}
-        </div>
+          </Select>
+          <GasPriceWrapper $show={gasPrice > 0}>
+            <img src={GasIcon} /> <span>{gasPrice} GWei</span>
+          </GasPriceWrapper>
+        </NetworkWrapper>
 
-        <div className="flex">
-          <button onClick={backupPrivateKey}>Backup private key</button>
-          <button onClick={backupPassword}>Backup password</button>
-          <button onClick={fetchBalances}>
-            <img src={RefreshIcon} />
-          </button>
-          <button onClick={toggleBalancesVisible} className="img-button">
-            <img src={balancesVisible ? HideIcon : ShowIcon} />
-          </button>
-          <button onClick={close}>Close</button>
-        </div>
-      </div>
+        <FeaturesWrapper>
+          <Button onClick={backupPrivateKey} $size="small">
+            Backup private key
+          </Button>
+          <Button onClick={backupPassword} $size="small">
+            Backup password
+          </Button>
+        </FeaturesWrapper>
 
-      <h2 className="text-center">
-        <a
-          href={explorerLinkOfAddress(chainId, account.address)}
-          target="_blank"
-        >
-          {truncate(account.address)}
-        </a>
-        <button onClick={copyAddress} className="img-button">
-          <img src={CopyIcon} />
-        </button>
-      </h2>
+        <CloseButton onClick={close}>
+          <img src={LockIcon} />
+        </CloseButton>
+      </NetworkAndFeatures>
 
-      <h1 className="text-center">
-        {loading
-          ? "???"
-          : !balancesVisible
-          ? "---"
-          : Number(nativeBalance).toFixed(4)}
-        &nbsp;
-        {nativeTokenName}
-      </h1>
+      <PrimaryBox>
+        <AddressWrapper>
+          <AddressAndCopy>
+            <AddressLink
+              href={explorerLinkOfAddress(chainId, account.address)}
+              target="_blank"
+            >
+              <AddressLong>{truncate(account.address)}</AddressLong>
+              <AddressShort>{truncate(account.address, 6)}</AddressShort>
+            </AddressLink>
 
-      <div>
+            <button onClick={copyAddress}>
+              <img src={CopyIcon} />
+            </button>
+          </AddressAndCopy>
+
+          <RefreshAndEyeballs>
+            <button onClick={fetchBalances}>
+              <img src={RefreshIcon} />
+            </button>
+            <button onClick={toggleBalancesVisible}>
+              <img src={balancesVisible ? HideIcon : ShowIcon} />
+            </button>
+          </RefreshAndEyeballs>
+        </AddressWrapper>
+
+        <NativeBalance>
+          {loading
+            ? "-----"
+            : !balancesVisible
+            ? "*****"
+            : Number(nativeBalance).toFixed(4)}
+          &nbsp;
+          {nativeTokenName}
+        </NativeBalance>
+      </PrimaryBox>
+
+      <FeaturesWrapper2>
+        <Button onClick={backupPrivateKey} $size="small">
+          Backup private key
+        </Button>
+        <Button onClick={backupPassword} $size="small">
+          Backup password
+        </Button>
+      </FeaturesWrapper2>
+
+      <TokensList>
         {tokenBalances
           .filter((t) => !!t.nativeToken)
           .concat(tokenBalances.filter((t) => !t.nativeToken))
@@ -125,8 +296,8 @@ const EvmHome = () => {
               onClick={() => selectToken(t.contractAddress)}
             />
           ))}
-      </div>
-    </div>
+      </TokensList>
+    </Container>
   );
 };
 
