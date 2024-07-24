@@ -13,6 +13,23 @@ export const HASH_OPTIONS = {
   keyLen: 64,
 };
 
+export const splitPasswordAndSalt = (rawPassword) => [
+  rawPassword
+    .split("")
+    .filter((v, id) => id % 2 === 0)
+    .join(""),
+  rawPassword
+    .split("")
+    .filter((v, id) => id % 2 === 1)
+    .join(""),
+];
+
+export const joinPasswordAndSalt = (password, salt) =>
+  password
+    .split("")
+    .map((p, i) => `${p}${salt[i] || ""}`)
+    .join("");
+
 export const getEvmPrivateKey = (h) =>
   ethers.keccak256(abi.encode(["string"], [h]));
 
@@ -57,6 +74,5 @@ export const NETWORKS = {
 export const gasMultiplier = (option) =>
   option === "high" ? 175n : option === "average" ? 150n : 100n;
 
-
 // 15 minutes, after this period, wallet will be locked.
-export const IDLE_DURATION = 900_000
+export const IDLE_DURATION = 900_000;

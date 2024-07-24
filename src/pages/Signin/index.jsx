@@ -1,7 +1,7 @@
 import React, { useContext, useState, useMemo } from "react";
 import { Buffer } from "buffer";
 import { scrypt } from "scrypt-js";
-import { HASH_OPTIONS } from "@mybucks/lib/conf";
+import { HASH_OPTIONS, splitPasswordAndSalt } from "@mybucks/lib/conf";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { Box } from "@mybucks/components/Containers";
 import Button from "@mybucks/components/Button";
@@ -118,15 +118,20 @@ const MobileProgressWrapper = styled.div`
 `;
 
 const SignIn = () => {
-  const [password, setPassword] = useState(
-    import.meta.env.DEV ? "ranDommPassword***$%" : ""
-  );
-  const [salt, setSalt] = useState(import.meta.env.DEV ? "90901210" : "");
+  const [rawPassword, setRawPassword] = useState("");
+  const [rawPasswordConfirm, setRawPasswordConfirm] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const hasError = useMemo(() => !password || !salt, [password, salt]);
-
+  const [password, salt] = useMemo(
+    () => splitPasswordAndSalt(rawPassword),
+    [rawPassword]
+  );
+  const hasError = useMemo(
+    () =>
+      !rawPassword || rawPassword !== rawPasswordConfirm || !password || !salt,
+    [rawPassword, rawPasswordConfirm]
+  );
   const { setup } = useContext(StoreContext);
 
   async function onSubmit() {
@@ -156,7 +161,7 @@ const SignIn = () => {
     <>
       <Container>
         <LogoWrapper>
-          <img src="/logo-72x72.png" alt="mybucks.online" />
+          <img src="/logo-48x48.png" alt="mybucks.online" />
           <LogoTitle>mybucks.online</LogoTitle>
         </LogoWrapper>
 
@@ -165,25 +170,25 @@ const SignIn = () => {
           <Caption>Keep your password strong and secure</Caption>
 
           <div>
-            <Label htmlFor="password1">Password 1</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
-              id="password1"
+              id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password 1"
+              value={rawPassword}
+              onChange={(e) => setRawPassword(e.target.value)}
+              placeholder="Password"
               disabled={disabled}
             />
           </div>
 
           <div>
-            <Label htmlFor="password2">Password 2</Label>
+            <Label htmlFor="password-confirm">Confirm Password</Label>
             <Input
-              id="password2"
+              id="password-confirm"
               type="password"
-              value={salt}
-              onChange={(e) => setSalt(e.target.value)}
-              placeholder="Password 2"
+              value={rawPasswordConfirm}
+              onChange={(e) => setRawPasswordConfirm(e.target.value)}
+              placeholder="Confirm password"
               disabled={disabled}
             />
           </div>
@@ -194,7 +199,7 @@ const SignIn = () => {
             <Checkbox>Lowercase (a~z)</Checkbox>
             <Checkbox>Number (012~9)</Checkbox>
             <Checkbox>Special characters(!@#..)</Checkbox>
-            <Checkbox>Don't forget!!!</Checkbox>
+            <Checkbox>Match password</Checkbox>
           </CheckboxesWrapper>
 
           <Button
