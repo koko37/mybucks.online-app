@@ -19,11 +19,31 @@ const NavsWrapper = styled.div`
 `;
 
 const TransactionDetails = styled.div`
+  word-break: break-all;
   margin-bottom: ${({ theme }) => theme.sizes.xl};
   font-size: ${({ theme }) => theme.sizes.sm};
   font-weight: ${({ theme }) => theme.weights.base};
   line-height: 140%;
   color: ${({ theme }) => theme.colors.gray200};
+`;
+
+const TransactionItem = styled.span`
+  font-weight: ${({ theme }) => theme.weights.highlight};
+  color: ${({ theme }) => theme.colors.gray400};
+`;
+
+const OptionsWrapper = styled.fieldset`
+  font-size: ${({ theme }) => theme.sizes.sm};
+  font-weight: ${({ theme }) => theme.weights.regular};
+  line-height: 130%;
+  margin-bottom: ${({ theme }) => theme.sizes.xl};
+`;
+
+const OptionItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.sizes.base};
+  padding: ${({ theme }) => theme.sizes.x3s};
 `;
 
 const InvalidTransfer = styled.div`
@@ -122,14 +142,25 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
         <H3>Confirm transaction</H3>
 
         <TransactionDetails>
-          <p>To: {to}</p>
-          {!!value && <p>Value: {ethers.formatEther(value)}</p>}
-          <p>Data: {data}</p>
+          <p>
+            <TransactionItem>To:</TransactionItem> {to}
+          </p>
+          {!!value && (
+            <p>
+              <TransactionItem>Value:</TransactionItem>{" "}
+              {ethers.formatEther(value)}
+            </p>
+          )}
+          {!!data && (
+            <p>
+              <TransactionItem>Data:</TransactionItem> {data}
+            </p>
+          )}
         </TransactionDetails>
 
-        <fieldset disabled={pending}>
+        <OptionsWrapper disabled={pending}>
           <legend>Select gas price:</legend>
-          <div>
+          <OptionItem>
             <input
               type="radio"
               name="low"
@@ -141,9 +172,9 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
             <label htmlFor="low">
               Low / {ethers.formatUnits(account.gasPrice, 9)} GWei
             </label>
-          </div>
+          </OptionItem>
 
-          <div>
+          <OptionItem>
             <input
               type="radio"
               name="average"
@@ -153,9 +184,9 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
               onChange={() => setGasOption("average")}
             />
             <label htmlFor="average">Average (*1.5)</label>
-          </div>
+          </OptionItem>
 
-          <div>
+          <OptionItem>
             <input
               type="radio"
               name="high"
@@ -165,8 +196,8 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
               onChange={() => setGasOption("high")}
             />
             <label htmlFor="high">High (*1.75)</label>
-          </div>
-        </fieldset>
+          </OptionItem>
+        </OptionsWrapper>
 
         <EstimatedGasFee>
           <img src={InfoGreenIcon} />
