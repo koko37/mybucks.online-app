@@ -32,8 +32,8 @@ const LogoWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.sizes.x4l};
 
   img {
-    width: 4.5rem;
-    height: 4.5rem;
+    width: 3rem;
+    height: 3rem;
   }
 
   ${media.sm`
@@ -47,7 +47,7 @@ const LogoWrapper = styled.div`
 `;
 
 const LogoTitle = styled.h3`
-  font-size: ${({ theme }) => theme.sizes.x2l};
+  font-size: ${({ theme }) => theme.sizes.xl};
   font-weight: ${({ theme }) => theme.weights.highlight};
   color: ${({ theme }) => theme.colors.gray200};
   line-height: 150%;
@@ -157,7 +157,7 @@ const SignIn = () => {
       <Container>
         <LogoWrapper>
           <img src="/logo-72x72.png" alt="mybucks.online" />
-          <LogoTitle>myBucks.online</LogoTitle>
+          <LogoTitle>mybucks.online</LogoTitle>
         </LogoWrapper>
 
         <Box>
