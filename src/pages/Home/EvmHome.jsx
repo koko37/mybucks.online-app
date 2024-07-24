@@ -12,6 +12,7 @@ import media from "@mybucks/styles/media";
 import { Container, Box } from "@mybucks/components/Containers";
 import BaseButton from "@mybucks/components/Button";
 import Select from "@mybucks/components/Select";
+import Link from "@mybucks/components/Link";
 
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import ShowIcon from "@mybucks/assets/icons/show.svg";
@@ -63,7 +64,7 @@ const FeaturesWrapper = styled.div`
 
 const Button = styled(BaseButton)`
   line-height: 180%;
-`
+`;
 
 const CloseButton = styled(BaseButton).attrs({ $size: "small" })`
   display: flex;
@@ -96,12 +97,8 @@ const AddressAndCopy = styled.div`
   gap: ${({ theme }) => theme.sizes.xl};
 `;
 
-const AddressLink = styled.a`
-  color: ${({ theme }) => theme.colors.primary};
+const AddressLink = styled(Link)`
   font-size: ${({ theme }) => theme.sizes.lg};
-  font-weight: ${({ theme }) => theme.weights.regular};
-  line-height: 120%;
-  text-decoration: underline;
 `;
 
 const AddressLong = styled.span`

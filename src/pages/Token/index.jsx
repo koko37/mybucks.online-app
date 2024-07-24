@@ -164,13 +164,13 @@ const Token = () => {
 
   useEffect(() => {
     const estimateGas = async () => {
-      if (!recipient && !amount) {
+      if (!recipient || !amount) {
         setHasError(false);
         setGasEstimation(0);
         return;
       }
 
-      if (!recipient || !ethers.isAddress(recipient) || !amount || !token) {
+      if (!ethers.isAddress(recipient) || amount < 0 || !token) {
         setHasError(true);
         setGasEstimation(0);
         return;
