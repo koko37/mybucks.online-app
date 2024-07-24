@@ -245,7 +245,7 @@ const EvmHome = () => {
               <AddressShort>{truncate(account.address, 6)}</AddressShort>
             </AddressLink>
 
-            <button onClick={copyAddress} className="img-button">
+            <button onClick={copyAddress}>
               <img src={CopyIcon} />
             </button>
           </AddressAndCopy>
@@ -254,7 +254,7 @@ const EvmHome = () => {
             <button onClick={fetchBalances}>
               <img src={RefreshIcon} />
             </button>
-            <button onClick={toggleBalancesVisible} className="img-button">
+            <button onClick={toggleBalancesVisible}>
               <img src={balancesVisible ? HideIcon : ShowIcon} />
             </button>
           </RefreshAndEyeballs>

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { ToastContainer } from "react-toastify";
 import { useIdleTimer } from "react-idle-timer";
 import { toast } from "react-toastify";
@@ -6,7 +6,6 @@ import { IDLE_DURATION } from "./lib/conf";
 import { StoreContext } from "./contexts/Store";
 import styled from "styled-components";
 
-import Landing from "@mybucks/pages/Landing";
 import SignIn from "@mybucks/pages/Signin";
 import Home from "@mybucks/pages/Home";
 import Token from "./pages/Token";
@@ -17,30 +16,36 @@ const AppWrapper = styled.div`
   position: relative;
 `;
 
+const ConnectionIssue = styled.div`
+  text-align: center;
+  padding: 0.5rem;
+  background-color: ${({ theme }) => theme.colors.gray200};
+  color: ${({ theme }) => theme.colors.gray25};
+  font-size: ${({ theme }) => theme.sizes.base};
+  font-weight: ${({ theme }) => theme.weights.regular};
+`;
+
 function App() {
   const { connectivity, hash, account, selectedTokenAddress, reset } =
     useContext(StoreContext);
-  const [app, setApp] = useState(false);
 
-  const onIdle = () => {
-    if (hash && account) {
-      reset();
-      toast("Account locked after 15 minutes idle!");
-    }
-  };
-
-  useIdleTimer({ onIdle, timeout: IDLE_DURATION, throttle: 500 });
-
-  if (!app) {
-    return <Landing open={() => setApp(true)} />;
-  }
+  useIdleTimer({
+    onIdle: () => {
+      if (hash && account) {
+        reset();
+        toast("Account locked after 15 minutes idle!");
+      }
+    },
+    timeout: IDLE_DURATION,
+    throttle: 500,
+  });
 
   return (
     <AppWrapper>
       {!connectivity && (
-        <div className="border border-rounded">
+        <ConnectionIssue>
           Please check your internet connection!
-        </div>
+        </ConnectionIssue>
       )}
       {!hash || !account ? (
         <SignIn />
