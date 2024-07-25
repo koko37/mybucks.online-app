@@ -13,6 +13,8 @@ export const HASH_OPTIONS = {
   keyLen: 64,
 };
 
+export const RAW_PASSWORD_MIN_LENGTH = 12;
+
 export const splitPasswordAndSalt = (rawPassword) => [
   rawPassword
     .split("")
