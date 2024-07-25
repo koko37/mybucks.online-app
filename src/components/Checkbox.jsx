@@ -8,7 +8,10 @@ const CheckboxWrapper = styled.div`
   gap: ${({ theme }) => theme.sizes.xs};
   margin-bottom: ${({ theme }) => theme.sizes.xs};
 `;
-const CheckboxValue = styled.input.attrs({ type: "checkbox" })``;
+const CheckboxValue = styled.input.attrs({
+  type: "checkbox",
+  readOnly: true,
+})``;
 const CheckboxLabel = styled.label`
   font-size: ${({ theme }) => theme.sizes.xs};
   font-weight: ${({ theme }) => theme.weights.regular};
