@@ -17,15 +17,10 @@ const CheckboxLabel = styled.label`
   user-select: none;
 `;
 
-const Checkbox = ({ children }) => {
-  const [id] = useState(nanoid());
-
-  return (
-    <CheckboxWrapper>
-      <CheckboxValue id={id} />
-      <CheckboxLabel htmlFor={id}>{children}</CheckboxLabel>
-    </CheckboxWrapper>
-  );
-};
-
+const Checkbox = ({ children, value, id }) => (
+  <CheckboxWrapper>
+    <CheckboxValue id={id} checked={!!value} />
+    <CheckboxLabel htmlFor={id}>{children}</CheckboxLabel>
+  </CheckboxWrapper>
+);
 export default Checkbox;

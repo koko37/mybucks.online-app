@@ -1,7 +1,11 @@
 import React, { useContext, useState, useMemo } from "react";
 import { Buffer } from "buffer";
 import { scrypt } from "scrypt-js";
-import { HASH_OPTIONS } from "@mybucks/lib/conf";
+import {
+  HASH_OPTIONS,
+  RAW_PASSWORD_MIN_LENGTH,
+  splitPasswordAndSalt,
+} from "@mybucks/lib/conf";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { Box } from "@mybucks/components/Containers";
 import Button from "@mybucks/components/Button";
@@ -118,16 +122,36 @@ const MobileProgressWrapper = styled.div`
 `;
 
 const SignIn = () => {
-  const [password, setPassword] = useState(
-    import.meta.env.DEV ? "ranDommPassword***$%" : ""
-  );
-  const [salt, setSalt] = useState(import.meta.env.DEV ? "90901210" : "");
+  const { setup } = useContext(StoreContext);
+
+  const [rawPassword, setRawPassword] = useState("");
+  const [rawPasswordConfirm, setRawPasswordConfirm] = useState("");
   const [disabled, setDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const hasError = useMemo(() => !password || !salt, [password, salt]);
-
-  const { setup } = useContext(StoreContext);
+  const [password, salt] = useMemo(
+    () => splitPasswordAndSalt(rawPassword),
+    [rawPassword]
+  );
+  const hasMinLength = useMemo(
+    () => rawPassword.length >= RAW_PASSWORD_MIN_LENGTH,
+    [rawPassword]
+  );
+  const hasLowercase = useMemo(() => /[a-z]/.test(rawPassword), [rawPassword]);
+  const hasUppercase = useMemo(() => /[A-Z]/.test(rawPassword), [rawPassword]);
+  const hasNumbers = useMemo(() => /\d/.test(rawPassword), [rawPassword]);
+  const hasSpecialChars = useMemo(
+    () => /[!@#$%^&*(),.?":{}|<>]/.test(rawPassword),
+    [rawPassword]
+  );
+  const hasMatchedPassword = useMemo(
+    () => rawPassword && rawPassword === rawPasswordConfirm,
+    [rawPassword, rawPasswordConfirm]
+  );
+  const hasEmpty = useMemo(
+    () => !rawPassword || !password || !salt,
+    [rawPassword, rawPasswordConfirm]
+  );
 
   async function onSubmit() {
     setDisabled(true);
@@ -156,7 +180,7 @@ const SignIn = () => {
     <>
       <Container>
         <LogoWrapper>
-          <img src="/logo-72x72.png" alt="mybucks.online" />
+          <img src="/logo-48x48.png" alt="mybucks.online" />
           <LogoTitle>mybucks.online</LogoTitle>
         </LogoWrapper>
 
@@ -165,41 +189,62 @@ const SignIn = () => {
           <Caption>Keep your password strong and secure</Caption>
 
           <div>
-            <Label htmlFor="password1">Password 1</Label>
+            <Label htmlFor="password">Password</Label>
             <Input
-              id="password1"
+              id="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password 1"
+              value={rawPassword}
+              onChange={(e) => setRawPassword(e.target.value)}
+              placeholder="Password"
               disabled={disabled}
             />
           </div>
 
           <div>
-            <Label htmlFor="password2">Password 2</Label>
+            <Label htmlFor="password-confirm">Confirm Password</Label>
             <Input
-              id="password2"
+              id="password-confirm"
               type="password"
-              value={salt}
-              onChange={(e) => setSalt(e.target.value)}
-              placeholder="Password 2"
+              value={rawPasswordConfirm}
+              onChange={(e) => setRawPasswordConfirm(e.target.value)}
+              placeholder="Confirm password"
               disabled={disabled}
             />
           </div>
 
           <CheckboxesWrapper>
-            <Checkbox>Min length: 12</Checkbox>
-            <Checkbox>Uppercase (A~Z)</Checkbox>
-            <Checkbox>Lowercase (a~z)</Checkbox>
-            <Checkbox>Number (012~9)</Checkbox>
-            <Checkbox>Special characters(!@#..)</Checkbox>
-            <Checkbox>Don't forget!!!</Checkbox>
+            <Checkbox id="min-length" value={hasMinLength}>
+              Min length: {RAW_PASSWORD_MIN_LENGTH}
+            </Checkbox>
+            <Checkbox id="uppercase" value={hasUppercase}>
+              Uppercase (A~Z)
+            </Checkbox>
+            <Checkbox id="lowercase" value={hasLowercase}>
+              Lowercase (a~z)
+            </Checkbox>
+            <Checkbox id="number" value={hasNumbers}>
+              Number (012~9)
+            </Checkbox>
+            <Checkbox id="special" value={hasSpecialChars}>
+              Special characters(!@#..)
+            </Checkbox>
+            <Checkbox id="match-password" value={hasMatchedPassword}>
+              Match password
+            </Checkbox>
           </CheckboxesWrapper>
 
           <Button
             onClick={onSubmit}
-            disabled={disabled || hasError}
+            disabled={
+              disabled ||
+              hasEmpty ||
+              !hasMinLength ||
+              !hasUppercase ||
+              !hasLowercase ||
+              !hasNumbers ||
+              !hasSpecialChars ||
+              !hasMatchedPassword
+            }
             $size="block"
           >
             Open
