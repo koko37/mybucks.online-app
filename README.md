@@ -2,7 +2,7 @@
 
 ## Summary
 
-This is a password-only crypto wallet built with [React.js](https://react.dev). It generates a private key from your password using an industry-standard, verified one-way hash function. Your private key forms your account, allowing you to transfer, receive, and hold your crypto assets permanently.
+This is a **password-only crypto wallet** built with [React.js](https://react.dev). It generates a private key from your password using an industry-standard, verified **one-way hash function**. Your private key forms your account, allowing you to transfer, receive, and hold your crypto assets permanently.
 
 ## How to Use
 
@@ -14,9 +14,9 @@ This is a password-only crypto wallet built with [React.js](https://react.dev). 
 
 ![Sign-in](/screenshots/Macbook-Air-mybucks.online.png)
 
-![Mobile Signin](/screenshots/iphone-13-signin.png)
-![Mobile Signin](/screenshots/iphone-13-dashboard.png)
-![Mobile Signin](/screenshots/iphone-13-transfer.png)
+<img src="screenshots/iphone-13-signin.png" width="33%" alt="Sign-in">
+<img src="screenshots/iphone-13-dashboard.png" width="33%" alt="Dashboard">
+<img src="screenshots/iphone-13-transfer.png" width="33%" alt="Transfer">
 
 ## Key Points
 
@@ -25,10 +25,11 @@ This is a password-only crypto wallet built with [React.js](https://react.dev). 
 - **No Registration Required:** No need for personal information, not even your email address.
 - **Absolute Privacy:** Nobody knows who you are; nobody stores your password.
 - **Transient Data:** Your account is generated whenever you open it. Closing or refreshing your browser erases all traces/history.
+- **Share your wallet address:** its origin remains unknown.
 
 ### Security
 
-- **One-Way Hash Function:** Utilizes `scrypt` and `keccak256`. Your password determines a unique private key.
+- **One-Way Hash Function:** Utilizes [**scrypt**](https://en.wikipedia.org/wiki/Scrypt) and [**keccak256**](https://en.wikipedia.org/wiki/SHA-3). Your password determines a unique private key.
 - **Resistance to Attacks:** Brute force attacks would take centuries. A strong password ensures asset protection.
 
 ### Ease of Use
@@ -39,7 +40,7 @@ This is a password-only crypto wallet built with [React.js](https://react.dev). 
 
 ### Analogy
 
-Think of it like a public locker at a railway station: 
+Think of it like a public locker at a railway station:
 
 1. Find an empty box.
 2. Place your goods inside.
@@ -49,8 +50,9 @@ Return later to access your goods with just your password—no ID checks require
 
 That's all! 🎉
 
-
 ## Generate the private key
+
+This demonstrates how to generate a private key from your password and helps you understand the process.
 
 ```javascript
 import { Buffer } from "buffer";
@@ -131,7 +133,7 @@ You can easily verify releases, deployments, and domain configuration:
 
 - [Actions](https://github.com/koko37/mybucks.online-app/actions)
 - [Releases](https://github.com/koko37/mybucks.online-app/releases)
-- [.github/workflows/main-pipeline.yml](https://github.com/koko37/mybucks.online-app/blob/main/.github/workflows/main-pipeline.yml)
+- [.github/workflows/main-pipeline.yml](https://github.com/koko37/mybucks.online-app/blob/master/.github/workflows/main-pipeline.yml)
 
 To check DNS settings:
 
@@ -148,5 +150,3 @@ Address: 185.199.110.153
 Name:	koko37.github.io
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ```
-
-I hope this helps! Let me know if you need any further modifications.
