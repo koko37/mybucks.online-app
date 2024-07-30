@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { nanoid } from "nanoid";
 
 const CheckboxWrapper = styled.div`
   display: flex;

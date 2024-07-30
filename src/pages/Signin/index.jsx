@@ -17,8 +17,6 @@ import { H1 } from "@mybucks/components/Texts";
 import styled from "styled-components";
 import media from "@mybucks/styles/media";
 
-import Logo from "@mybucks/assets/imgs/logo-48x48.png"
-
 const Container = styled.div`
   max-width: 40.5rem;
   margin: 0 auto;
@@ -182,7 +180,7 @@ const SignIn = () => {
     <>
       <Container>
         <LogoWrapper>
-          <img src={Logo} alt="mybucks.online" />
+          <img src="/logo-48x48.png" alt="mybucks.online" />
           <LogoTitle>mybucks.online</LogoTitle>
         </LogoWrapper>
 
