@@ -148,7 +148,24 @@ Address:	127.0.0.53#53
 Non-authoritative answer:
 app.mybucks.online	canonical name = koko37.github.io.
 Name:	koko37.github.io
-Address: 185.199.110.153
-Name:	koko37.github.io
+~~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+```bash
+dig app.mybucks.online
+
+; <<>> DiG 9.18.28-0ubuntu0.22.04.1-Ubuntu <<>> app.mybucks.online
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 26113
+;; flags: qr rd ra; QUERY: 1, ANSWER: 5, AUTHORITY: 5, ADDITIONAL: 11
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 65494
+;; QUESTION SECTION:
+;app.mybucks.online.		IN	A
+
+;; ANSWER SECTION:
+app.mybucks.online.	5	IN	CNAME	koko37.github.io.
 ~~~~~~~~~~~~~~~~~~~~~~~~
 ```
