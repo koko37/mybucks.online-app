@@ -14,9 +14,11 @@ This is a **password-only crypto wallet** built with [React.js](https://react.de
 
 ![Sign-in](/screenshots/Macbook-Air-mybucks.online.png)
 
-<img src="screenshots/iphone-13-signin.png" width="33%" alt="Sign-in">
-<img src="screenshots/iphone-13-dashboard.png" width="33%" alt="Dashboard">
-<img src="screenshots/iphone-13-transfer.png" width="33%" alt="Transfer">
+<p align="center">
+<img src="screenshots/iphone-13-signin.png" width="32%" alt="Sign-in">
+<img src="screenshots/iphone-13-dashboard.png" width="32%" alt="Dashboard">
+<img src="screenshots/iphone-13-transfer.png" width="32%" alt="Transfer">
+</p>
 
 ## Key Points
 
