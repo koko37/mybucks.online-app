@@ -11,7 +11,7 @@ import { ethers } from "ethers";
 import { CovalentClient } from "@covalenthq/client-sdk";
 import camelcaseKeys from "camelcase-keys";
 
-const client = new CovalentClient(import.meta.env.VITE_COVALENT_KEY);
+const client = new CovalentClient(import.meta.env.VITE_COVALENT_API_KEY);
 
 export const StoreContext = createContext({
   connectivity: true,

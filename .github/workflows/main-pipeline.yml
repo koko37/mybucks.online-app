@@ -39,9 +39,8 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build the project
         env:
-          VITE_RPC_MAINNNET_KEY: ${{ secrets.VITE_RPC_MAINNNET_KEY }}
-          VITE_RPC_POLYGON_KEY: ${{ secrets.VITE_RPC_POLYGON_KEY }}
-          VITE_COVALENT_KEY: ${{ secrets.VITE_COVALENT_KEY }}
+          VITE_INFURA_API_KEY: ${{ secrets.VITE_INFURA_API_KEY }}
+          VITE_COVALENT_API_KEY: ${{ secrets.VITE_COVALENT_API_KEY }}
         run: yarn build
       - name: Setup Pages
         uses: actions/configure-pages@v4

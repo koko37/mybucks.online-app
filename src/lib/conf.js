@@ -50,8 +50,7 @@ export const NETWORKS = {
     chainId: 1,
     name: "ethereum",
     label: "Ethereum",
-    provider:
-      "https://mainnet.infura.io/v3/" + import.meta.env.VITE_RPC_MAINNNET_KEY,
+    provider: "https://mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
     scanner: "https://etherscan.io",
   },
   56: {
@@ -65,10 +64,43 @@ export const NETWORKS = {
     chainId: 137,
     name: "polygon",
     label: "Polygon",
-    provider:
-      "https://polygon-mainnet.g.alchemy.com/v2/" +
-      import.meta.env.VITE_RPC_POLYGON_KEY,
+    provider: "https://polygon-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
     scanner: "https://polygonscan.com",
+  },
+  42161: {
+    chainId: 42161,
+    name: "arbitrum",
+    label: "Arbitrum",
+    provider: "https://arbitrum-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    scanner: "https://arbiscan.io",
+  },
+  43114: {
+    chainId: 43114,
+    name: "avalanche",
+    label: "Avalanche C-Chain",
+    provider: "https://avalanche-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    scanner: "https://snowtrace.io",
+  },
+  10: {
+    chainId: 10,
+    name: "optimism",
+    label: "Optimism",
+    provider: "https://optimism-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    scanner: "https://optimistic.etherscan.io",
+  },
+  59144: {
+    chainId: 59144,
+    name: "linea",
+    label: "Linea",
+    provider: "https://linea-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    scanner: "https://lineascan.build",
+  },
+  42220: {
+    chainId: 42220,
+    name: "celo",
+    label: "Celo",
+    provider: "https://celo-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    scanner: "https://celoscan.io",
   },
 };
 

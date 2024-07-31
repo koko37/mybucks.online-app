@@ -45,8 +45,8 @@ This is a **password-only crypto wallet** built with [React.js](https://react.de
 Think of it like a public locker at a railway station:
 
 1. Find an empty box.
-2. Place your goods inside.
-3. Set up your password anonymously.
+2. Set up your password anonymously.
+3. Place your goods inside and lock.
 
 Return later to access your goods with just your password—no ID checks required.
 
