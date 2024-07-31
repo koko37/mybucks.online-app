@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
 import { toast } from "react-toastify";
 import styled from "styled-components";
+import toFlexible from "toflexible";
 import media from "@mybucks/styles/media";
 
 import { Container, Box } from "@mybucks/components/Containers";
@@ -174,7 +175,7 @@ const EvmHome = () => {
   } = useContext(StoreContext);
   const [balancesVisible, setBalancesVisible] = useState(false);
   const gasPrice = useMemo(
-    () => parseFloat(ethers.formatUnits(account.gasPrice, 9)).toFixed(1),
+    () => toFlexible(parseFloat(ethers.formatUnits(account.gasPrice, 9)), 2),
     [tick, account]
   );
 
