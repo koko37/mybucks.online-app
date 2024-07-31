@@ -17,6 +17,8 @@ import { H1 } from "@mybucks/components/Texts";
 import styled from "styled-components";
 import media from "@mybucks/styles/media";
 
+const TEST_PASSWORD = "randommPassword82^";
+
 const Container = styled.div`
   max-width: 40.5rem;
   margin: 0 auto;
@@ -124,8 +126,12 @@ const MobileProgressWrapper = styled.div`
 const SignIn = () => {
   const { setup } = useContext(StoreContext);
 
-  const [rawPassword, setRawPassword] = useState("");
-  const [rawPasswordConfirm, setRawPasswordConfirm] = useState("");
+  const [rawPassword, setRawPassword] = useState(
+    import.meta.env.DEV ? TEST_PASSWORD : ""
+  );
+  const [rawPasswordConfirm, setRawPasswordConfirm] = useState(
+    import.meta.env.DEV ? TEST_PASSWORD : ""
+  );
   const [disabled, setDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -153,7 +159,20 @@ const SignIn = () => {
     [rawPassword, rawPasswordConfirm]
   );
 
-  async function onSubmit() {
+  const hasInvalidInput = useMemo(
+    () =>
+      disabled ||
+      hasEmpty ||
+      !hasMinLength ||
+      !hasUppercase ||
+      !hasLowercase ||
+      !hasNumbers ||
+      !hasSpecialChars ||
+      !hasMatchedPassword,
+    [[rawPassword, rawPasswordConfirm, disabled]]
+  );
+
+  const onSubmit = async () => {
     setDisabled(true);
     try {
       const passwordBuffer = Buffer.from(password);
@@ -174,7 +193,17 @@ const SignIn = () => {
     } finally {
       setDisabled(false);
     }
-  }
+  };
+
+  const onKeyDown = (e) => {
+    if (hasInvalidInput) {
+      return;
+    }
+
+    if (e.key === "Enter") {
+      onSubmit();
+    }
+  };
 
   return (
     <>
@@ -193,10 +222,11 @@ const SignIn = () => {
             <Input
               id="password"
               type="password"
-              value={rawPassword}
-              onChange={(e) => setRawPassword(e.target.value)}
               placeholder="Password"
               disabled={disabled}
+              value={rawPassword}
+              onChange={(e) => setRawPassword(e.target.value)}
+              onKeyDown={onKeyDown}
             />
           </div>
 
@@ -205,10 +235,11 @@ const SignIn = () => {
             <Input
               id="password-confirm"
               type="password"
-              value={rawPasswordConfirm}
-              onChange={(e) => setRawPasswordConfirm(e.target.value)}
               placeholder="Confirm password"
               disabled={disabled}
+              value={rawPasswordConfirm}
+              onChange={(e) => setRawPasswordConfirm(e.target.value)}
+              onKeyDown={onKeyDown}
             />
           </div>
 
@@ -233,20 +264,7 @@ const SignIn = () => {
             </Checkbox>
           </CheckboxesWrapper>
 
-          <Button
-            onClick={onSubmit}
-            disabled={
-              disabled ||
-              hasEmpty ||
-              !hasMinLength ||
-              !hasUppercase ||
-              !hasLowercase ||
-              !hasNumbers ||
-              !hasSpecialChars ||
-              !hasMatchedPassword
-            }
-            $size="block"
-          >
+          <Button onClick={onSubmit} disabled={hasInvalidInput} $size="block">
             Open
           </Button>
         </Box>
