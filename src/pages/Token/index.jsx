@@ -132,7 +132,7 @@ const Submit = styled(Button)`
 `;
 
 const Token = () => {
-  const [hasError, setHasError] = useState(false);
+  const [hasErrorInput, setHasErrorInput] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [transaction, setTransaction] = useState(null);
   const [txHash, setTxHash] = useState("");
@@ -165,18 +165,18 @@ const Token = () => {
   useEffect(() => {
     const estimateGas = async () => {
       if (!recipient || !amount) {
-        setHasError(false);
+        setHasErrorInput(false);
         setGasEstimation(0);
         return;
       }
 
       if (!ethers.isAddress(recipient) || amount < 0 || !token) {
-        setHasError(true);
+        setHasErrorInput(true);
         setGasEstimation(0);
         return;
       }
 
-      setHasError(false);
+      setHasErrorInput(false);
       const txData = !!token.nativeToken
         ? {
             to: recipient,
@@ -201,7 +201,7 @@ const Token = () => {
       } catch (e) {
         setGasEstimation("");
         setGasEstimationValue("");
-        setHasError(true);
+        setHasErrorInput(true);
       }
     };
 
@@ -307,7 +307,7 @@ const Token = () => {
           <MaxButton onClick={setMaxAmount}>Max</MaxButton>
         </AmountWrapper>
 
-        {hasError ? (
+        {hasErrorInput ? (
           <InvalidTransfer>
             <img src={InfoRedIcon} />
             <span>Invalid transfer</span>
@@ -324,7 +324,10 @@ const Token = () => {
           <></>
         )}
 
-        <Submit onClick={sendToken} disabled={hasError || gasEstimation === 0}>
+        <Submit
+          onClick={sendToken}
+          disabled={hasErrorInput || gasEstimation === 0}
+        >
           Submit
         </Submit>
       </Box>

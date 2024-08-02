@@ -10,6 +10,7 @@ import { H3 } from "@mybucks/components/Texts";
 import media from "@mybucks/styles/media";
 
 import BackIcon from "@mybucks/assets/icons/back.svg";
+import InfoRedIcon from "@mybucks/assets/icons/info-red.svg";
 import InfoGreenIcon from "@mybucks/assets/icons/info-green.svg";
 
 const NavsWrapper = styled.div`
@@ -51,7 +52,7 @@ const InvalidTransfer = styled.div`
   border-radius: ${({ theme }) => theme.sizes.x3s};
   color: ${({ theme }) => theme.colors.error};
   border: 1px solid ${({ theme }) => theme.colors.error};
-  margin-bottom: ${({ theme }) => theme.sizes.x2l};
+  margin-bottom: ${({ theme }) => theme.sizes.base};
   font-weight: ${({ theme }) => theme.weights.base};
   font-size: ${({ theme }) => theme.sizes.xs};
   line-height: 180%;
@@ -95,6 +96,7 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
 
   const [gasEstimation, setGasEstimation] = useState(0);
   const [gasEstimationValue, setGasEstimationValue] = useState(0);
+  const [hasError, setHasError] = useState(false);
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
@@ -117,17 +119,24 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
 
   const confirm = async () => {
     setPending(true);
-    const tx = await account.execute({
-      to,
-      value,
-      data,
-      gasPrice: (account.gasPrice * gasMultiplier(gasOption)) / 100n,
-    });
-    setPending(false);
+    setHasError(false);
 
-    // update balances
-    fetchBalances();
-    onSubmit(tx);
+    try {
+      const tx = await account.execute({
+        to,
+        value,
+        data,
+        gasPrice: (account.gasPrice * gasMultiplier(gasOption)) / 100n,
+      });
+
+      // update balances
+      fetchBalances();
+      onSubmit(tx);
+    } catch (e) {
+      setHasError(true);
+    }
+
+    setPending(false);
   };
 
   return (
@@ -199,16 +208,23 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
           </OptionItem>
         </OptionsWrapper>
 
-        <EstimatedGasFee>
-          <img src={InfoGreenIcon} />
-          <span>
-            Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
-            {gasEstimationValue}
-          </span>
-        </EstimatedGasFee>
+        {hasError ? (
+          <InvalidTransfer>
+            <img src={InfoRedIcon} />
+            <span>Failed to execute! Please check balances.</span>
+          </InvalidTransfer>
+        ) : (
+          <EstimatedGasFee>
+            <img src={InfoGreenIcon} />
+            <span>
+              Estimated gas fee: {gasEstimation}&nbsp; {nativeTokenName} / $
+              {gasEstimationValue}
+            </span>
+          </EstimatedGasFee>
+        )}
 
         <ButtonsWrapper>
-          <Button onClick={confirm} disabled={pending}>
+          <Button onClick={confirm} disabled={pending | hasError}>
             Confirm
           </Button>
           <Button onClick={onReject} disabled={pending} $variant="secondary">
