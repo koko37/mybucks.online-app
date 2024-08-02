@@ -5,6 +5,7 @@ import MinedTransaction from "@mybucks/pages/MinedTransaction";
 import { ethers } from "ethers";
 import styled from "styled-components";
 import { explorerLinkOfContract } from "@mybucks/lib/utils";
+import Avatar from "@mybucks/components/Avatar";
 
 import BackIcon from "@mybucks/assets/icons/back.svg";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
@@ -53,12 +54,6 @@ const LogoAndLink = styled.div`
   align-items: flex-start;
   justify-content: center;
   gap: ${({ theme }) => theme.sizes.x3s};
-`;
-
-const Logo = styled.img`
-  width: 51px;
-  height: 51px;
-  border-radius: 50%;
 `;
 
 const ArrowUpRight = styled.img.attrs({ src: ArrowUpRightIcon })`
@@ -252,16 +247,26 @@ const Token = () => {
           {!token.nativeToken && (
             <ArrowUpRight style={{ visibility: "hidden" }} />
           )}
+
           {token.nativeToken ? (
-            <Logo src={token.logoURI} alt={token.contractTickerSymbol} />
+            <Avatar
+              uri={token.logoURI}
+              symbol={token.contractTickerSymbol}
+              fallbackColor={"#" + token.contractAddress.slice(2, 8)}
+            />
           ) : (
             <a
               href={explorerLinkOfContract(chainId, token.contractAddress)}
               target="_blank"
             >
-              <Logo src={token.logoURI} alt={token.contractTickerSymbol} />
+              <Avatar
+                uri={token.logoURI}
+                symbol={token.contractTickerSymbol}
+                fallbackColor={"#" + token.contractAddress.slice(2, 8)}
+              />
             </a>
           )}
+
           {!token.nativeToken && (
             <a
               href={explorerLinkOfContract(chainId, token.contractAddress)}

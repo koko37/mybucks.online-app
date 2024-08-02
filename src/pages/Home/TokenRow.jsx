@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import Avatar from "@mybucks/components/Avatar";
 
 /*
   token: 
@@ -28,23 +29,6 @@ const Wrap = styled.div`
   &:hover {
     border: 2px solid ${({ theme }) => theme.colors.primary};
   }
-`;
-
-const Logo = styled.img`
-  width: 51px;
-  height: 51px;
-  border-radius: 50%;
-`;
-
-const Avatar = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: ${({ theme }) => theme.colors.gray25};
-  width: 51px;
-  height: 51px;
-  border-radius: 50%;
-  font-size: ${({ theme }) => theme.sizes.x2l};
 `;
 
 const SymbolAndNameWrap = styled.div`
@@ -89,13 +73,11 @@ const Value = styled.p`
 
 const TokenRow = ({ token, balance, quote, onClick, balanceVisible }) => (
   <Wrap onClick={() => onClick(token)}>
-    {token.logoURI ? (
-      <Logo src={token.logoURI} alt={token.symbol} />
-    ) : (
-      <Avatar style={{ backgroundColor: "#" + token.contract.slice(2, 8) }}>
-        {token.symbol[0].toUpperCase()}
-      </Avatar>
-    )}
+    <Avatar
+      uri={token.logoURI}
+      symbol={token.symbol}
+      fallbackColor={"#" + token.contract.slice(2, 8)}
+    />
     <SymbolAndNameWrap>
       <Symbol>{token.symbol}</Symbol>
       <Name>{token.name}</Name>
