@@ -30,7 +30,7 @@ const Container = styled.div`
   }
 `;
 
-const LogoWrapper = styled.div`
+const LogoWrapper = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -208,7 +208,7 @@ const SignIn = () => {
   return (
     <>
       <Container>
-        <LogoWrapper>
+        <LogoWrapper href="https://mybucks.online">
           <img src="/logo-48x48.png" alt="mybucks.online" />
           <LogoTitle>mybucks.online</LogoTitle>
         </LogoWrapper>
