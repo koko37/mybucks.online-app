@@ -82,8 +82,8 @@ const Caption = styled.p`
 
   ${media.sm`
     font-size: ${({ theme }) => theme.sizes.sm};
-      margin-bottom: ${({ theme }) => theme.sizes.xl};
-    `}
+    margin-bottom: ${({ theme }) => theme.sizes.xl};
+  `}
 `;
 
 const CheckboxesWrapper = styled.div`
@@ -100,27 +100,27 @@ const CheckboxesWrapper = styled.div`
   `}
 `;
 
-const DesktopProgressWrapper = styled.div`
-  margin-top: ${({ theme }) => theme.sizes.x2l};
-  padding: 0 102px;
+const ProgressWrapper = styled.div`
+  position: fixed;
+  inset: 0;
+  background: #fffd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  margin-block-start: -8rem;
 
-  ${media.sm`
-    display: none;
-  `}
+  progress {
+    max-width: 16rem;
+  }
 `;
 
-const MobileProgressWrapper = styled.div`
-  display: none;
-
-  ${media.sm`
-    position: fixed;
-    inset: 0;
-    background: #FFFE;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  `}
+const Notice = styled.p`
+  text-align: center;
+  max-width: 16rem;
+  color: ${({ theme }) => theme.colors.gray200};
 `;
 
 const SignIn = () => {
@@ -147,7 +147,7 @@ const SignIn = () => {
   const hasUppercase = useMemo(() => /[A-Z]/.test(rawPassword), [rawPassword]);
   const hasNumbers = useMemo(() => /\d/.test(rawPassword), [rawPassword]);
   const hasSpecialChars = useMemo(
-    () => /[!@#$%^&*(),.?":{}|<>]/.test(rawPassword),
+    () => /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(rawPassword),
     [rawPassword]
   );
   const hasMatchedPassword = useMemo(
@@ -268,18 +268,14 @@ const SignIn = () => {
             Open
           </Button>
         </Box>
-
-        {!!progress && (
-          <DesktopProgressWrapper>
-            <Progress value={progress} max="100" />
-          </DesktopProgressWrapper>
-        )}
       </Container>
 
       {!!progress && (
-        <MobileProgressWrapper>
+        <ProgressWrapper>
+          <img src="/logo-72x72.png" alt="mybucks.online" />
+          <Notice>Hang on, it takes millions of years to brute force!</Notice>
           <Progress value={progress} max="100" />
-        </MobileProgressWrapper>
+        </ProgressWrapper>
       )}
     </>
   );
