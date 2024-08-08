@@ -5,7 +5,7 @@ const light = {
     success: "#29CC6A",
     error: "#FF5630",
     gray25: "#FFFFFF",
-    gray50: "#FAFAFA",
+    gray50: "#F4F4F4",
     gray100: "#E9E9EA",
     gray200: "#6E6E73",
     gray400: "#18181A",

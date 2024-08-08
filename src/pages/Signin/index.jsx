@@ -22,7 +22,7 @@ const TEST_PASSWORD = "randommPassword82^";
 const Container = styled.div`
   max-width: 40.5rem;
   margin: 0 auto;
-  margin-block: 4rem 6.75rem;
+  margin-block: 3rem 6.75rem;
 
   @media (max-width: 696px) {
     margin: 0 ${({ theme }) => theme.sizes.xl};
