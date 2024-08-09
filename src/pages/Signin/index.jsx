@@ -55,7 +55,7 @@ const LogoWrapper = styled.a`
 const LogoTitle = styled.h3`
   font-size: ${({ theme }) => theme.sizes.xl};
   font-weight: ${({ theme }) => theme.weights.highlight};
-  color: ${({ theme }) => theme.colors.gray200};
+  color: ${({ theme }) => theme.colors.gray400};
   line-height: 150%;
 
   ${media.sm`
