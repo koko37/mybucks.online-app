@@ -21,6 +21,7 @@ import HideIcon from "@mybucks/assets/icons/hide.svg";
 import CopyIcon from "@mybucks/assets/icons/copy.svg";
 import GasIcon from "@mybucks/assets/icons/gas.svg";
 import LockIcon from "@mybucks/assets/icons/lock.svg";
+import ArrowUpIcon from "@mybucks/assets/icons/arrow-up.svg";
 
 const NetworkAndFeatures = styled.div`
   display: flex;
@@ -53,18 +54,17 @@ const GasPriceWrapper = styled.div`
   font-size: ${({ theme }) => theme.sizes.sm};
 `;
 
-const FeaturesWrapper = styled.div`
+const BackupButton = styled(BaseButton).attrs({ $size: "small" })`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.sizes.x2l};
+  gap: 8px;
+  padding: 6px 8px;
 
   ${media.md`
-    display: none;
+    span {
+      display: none;
+    }
   `}
-`;
-
-const Button = styled(BaseButton)`
-  line-height: 180%;
 `;
 
 const CloseButton = styled(BaseButton).attrs({ $size: "small" })`
@@ -139,18 +139,6 @@ const NativeBalance = styled.h3`
   `}
 `;
 
-const FeaturesWrapper2 = styled.div`
-  display: none;
-
-  ${media.md`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: ${({ theme }) => theme.sizes.xl};
-    margin-bottom: ${({ theme }) => theme.sizes.xl};
-  `}
-`;
-
 const TokensList = styled.div`
   display: flex;
   flex-direction: column;
@@ -218,14 +206,9 @@ const EvmHome = () => {
           </GasPriceWrapper>
         </NetworkWrapper>
 
-        <FeaturesWrapper>
-          <Button onClick={backupPrivateKey} $size="small">
-            Backup private key
-          </Button>
-          <Button onClick={backupPassword} $size="small">
-            Backup password
-          </Button>
-        </FeaturesWrapper>
+        <BackupButton onClick={backupPrivateKey}>
+          <img src={ArrowUpIcon} /> <span>Backup Private Key</span>
+        </BackupButton>
 
         <CloseButton onClick={close}>
           <img src={LockIcon} />
@@ -268,15 +251,6 @@ const EvmHome = () => {
           {nativeTokenName}
         </NativeBalance>
       </PrimaryBox>
-
-      <FeaturesWrapper2>
-        <Button onClick={backupPrivateKey} $size="small">
-          Backup private key
-        </Button>
-        <Button onClick={backupPassword} $size="small">
-          Backup password
-        </Button>
-      </FeaturesWrapper2>
 
       <TokensList>
         {tokenBalances
