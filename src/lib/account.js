@@ -29,7 +29,7 @@ class EvmAccount {
     const { gasPrice } = await this.provider.getFeeData();
     this.gasPrice = gasPrice;
   }
-
+/*
   async nativeCurrency() {
     const balance = await this.provider.getBalance(this.address);
     return ethers.formatEther(balance);
@@ -46,7 +46,7 @@ class EvmAccount {
     const tx = await erc20.connect(this.account).transfer(to, amount);
     await tx.wait();
   }
-
+*/
   async populateTransferErc20(token, to, amount) {
     const erc20 = new Contract(token, IERC20.abi, this.provider);
     const result = await erc20
