@@ -3,8 +3,8 @@ import { Buffer } from "buffer";
 import { scrypt } from "scrypt-js";
 import {
   HASH_OPTIONS,
-  RAW_PASSWORD_MIN_LENGTH,
-  splitPasswordAndSalt,
+  PASSWORD_MIN_LENGTH,
+  PASSCODE_LENGTH,
 } from "@mybucks/lib/conf";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { Box } from "@mybucks/components/Containers";
@@ -18,6 +18,7 @@ import styled from "styled-components";
 import media from "@mybucks/styles/media";
 
 const TEST_PASSWORD = "randommPassword82^";
+const TEST_PASSCODE = "223356";
 
 const Container = styled.div`
   max-width: 40.5rem;
@@ -35,7 +36,7 @@ const LogoWrapper = styled.a`
   justify-content: center;
   align-items: center;
   gap: ${({ theme }) => theme.sizes.base};
-  margin-bottom: ${({ theme }) => theme.sizes.x4l};
+  margin-bottom: ${({ theme }) => theme.sizes.xl};
 
   img {
     width: 3rem;
@@ -43,8 +44,6 @@ const LogoWrapper = styled.a`
   }
 
   ${media.sm`
-    margin-bottom: ${({ theme }) => theme.sizes.xl};
-
     img {
       width: 2.5rem;
       height: 2.5rem;
@@ -87,7 +86,7 @@ const Caption = styled.p`
 `;
 
 const CheckboxesWrapper = styled.div`
-  margin: 2rem 0;
+  margin: 1rem 0;
   display: flex;
   flex-wrap: wrap;
 
@@ -126,50 +125,55 @@ const Notice = styled.p`
 const SignIn = () => {
   const { setup } = useContext(StoreContext);
 
-  const [rawPassword, setRawPassword] = useState(
+  const [password, setPassword] = useState(
     import.meta.env.DEV ? TEST_PASSWORD : ""
   );
-  const [rawPasswordConfirm, setRawPasswordConfirm] = useState(
+  const [passwordConfirm, setPasswordConfirm] = useState(
     import.meta.env.DEV ? TEST_PASSWORD : ""
+  );
+  const [passcode, setPasscode] = useState(
+    import.meta.env.DEV ? TEST_PASSCODE : ""
   );
   const [disabled, setDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const [password, salt] = useMemo(
-    () => splitPasswordAndSalt(rawPassword),
-    [rawPassword]
+  const salt = useMemo(
+    () => `${password.slice(-4)}${passcode}`,
+    [password, passcode]
   );
   const hasMinLength = useMemo(
-    () => rawPassword.length >= RAW_PASSWORD_MIN_LENGTH,
-    [rawPassword]
+    () => password.length >= PASSWORD_MIN_LENGTH,
+    [password]
   );
-  const hasLowercase = useMemo(() => /[a-z]/.test(rawPassword), [rawPassword]);
-  const hasUppercase = useMemo(() => /[A-Z]/.test(rawPassword), [rawPassword]);
-  const hasNumbers = useMemo(() => /\d/.test(rawPassword), [rawPassword]);
+  const hasLowercase = useMemo(() => /[a-z]/.test(password), [password]);
+  const hasUppercase = useMemo(() => /[A-Z]/.test(password), [password]);
+  const hasNumbers = useMemo(() => /\d/.test(password), [password]);
   const hasSpecialChars = useMemo(
-    () => /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(rawPassword),
-    [rawPassword]
+    () => /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password),
+    [password]
   );
   const hasMatchedPassword = useMemo(
-    () => rawPassword && rawPassword === rawPasswordConfirm,
-    [rawPassword, rawPasswordConfirm]
+    () => password && password === passwordConfirm,
+    [password, passwordConfirm]
   );
-  const hasEmpty = useMemo(
-    () => !rawPassword || !password || !salt,
-    [rawPassword, rawPasswordConfirm]
+  const hasValidPasscodeLength = useMemo(
+    () => passcode.length >= PASSCODE_LENGTH,
+    [passcode]
   );
 
   const hasInvalidInput = useMemo(
     () =>
       disabled ||
-      hasEmpty ||
+      !password ||
+      !passcode ||
       !hasMinLength ||
-      !hasUppercase ||
       !hasLowercase ||
+      !hasUppercase ||
       !hasNumbers ||
       !hasSpecialChars ||
-      !hasMatchedPassword,
-    [[rawPassword, rawPasswordConfirm, disabled]]
+      !hasMatchedPassword ||
+      !hasValidPasscodeLength,
+    [[password, passwordConfirm, passcode, disabled]]
   );
 
   const onSubmit = async () => {
@@ -187,7 +191,7 @@ const SignIn = () => {
         (p) => setProgress(Math.floor(p * 100))
       );
       const hashHex = Buffer.from(hashBuffer).toString("hex");
-      setup(password, salt, hashHex);
+      setup(password, passcode, salt, hashHex);
     } catch (e) {
       console.error("Error while setting up account ...");
     } finally {
@@ -224,8 +228,8 @@ const SignIn = () => {
               type="password"
               placeholder="Password"
               disabled={disabled}
-              value={rawPassword}
-              onChange={(e) => setRawPassword(e.target.value)}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               onKeyDown={onKeyDown}
             />
           </div>
@@ -237,15 +241,28 @@ const SignIn = () => {
               type="password"
               placeholder="Confirm password"
               disabled={disabled}
-              value={rawPasswordConfirm}
-              onChange={(e) => setRawPasswordConfirm(e.target.value)}
+              value={passwordConfirm}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              onKeyDown={onKeyDown}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="passcode">Passcode</Label>
+            <Input
+              id="passcode"
+              type="text"
+              placeholder="Passcode"
+              disabled={disabled}
+              value={passcode}
+              onChange={(e) => setPasscode(e.target.value)}
               onKeyDown={onKeyDown}
             />
           </div>
 
           <CheckboxesWrapper>
             <Checkbox id="min-length" value={hasMinLength}>
-              Min length: {RAW_PASSWORD_MIN_LENGTH}
+              Password length: &gt;={PASSWORD_MIN_LENGTH}
             </Checkbox>
             <Checkbox id="uppercase" value={hasUppercase}>
               Uppercase (A~Z)
@@ -261,6 +278,9 @@ const SignIn = () => {
             </Checkbox>
             <Checkbox id="match-password" value={hasMatchedPassword}>
               Match password
+            </Checkbox>
+            <Checkbox id="passcode-length" value={hasValidPasscodeLength}>
+              Passcode length: &gt;={PASSCODE_LENGTH}
             </Checkbox>
           </CheckboxesWrapper>
 

@@ -12,34 +12,14 @@ export const HASH_OPTIONS = {
   p: import.meta.env.DEV ? 1 : 5, // parallelization parameter
   keyLen: 64,
 };
-
-export const RAW_PASSWORD_MIN_LENGTH = 12;
-
-export const splitPasswordAndSalt = (rawPassword) => [
-  rawPassword
-    .split("")
-    .filter((v, id) => id % 2 === 0)
-    .join(""),
-  rawPassword
-    .split("")
-    .filter((v, id) => id % 2 === 1)
-    .join(""),
-];
-
-export const joinPasswordAndSalt = (password, salt) =>
-  password
-    .split("")
-    .map((p, i) => `${p}${salt[i] || ""}`)
-    .join("");
+export const PASSWORD_MIN_LENGTH = 12;
+export const PASSCODE_LENGTH = 6;
 
 export const getEvmPrivateKey = (h) =>
   ethers.keccak256(abi.encode(["string"], [h]));
 
-// btc | evm | solana | tron
-export const NETWORK_BTC = "btc";
 export const NETWORK_EVM = "evm";
 export const NETWORK_TRON = "tron";
-export const NETWORK_SOLANA = "sol";
 
 export const DEFAULT_NETWORK = NETWORK_EVM;
 export const DEFAULT_CHAIN_ID = 1;

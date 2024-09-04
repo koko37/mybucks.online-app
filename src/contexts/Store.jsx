@@ -16,9 +16,10 @@ const client = new CovalentClient(import.meta.env.VITE_COVALENT_API_KEY);
 export const StoreContext = createContext({
   connectivity: true,
   password: "",
+  passcode: "",
   salt: "",
   hash: "",
-  setup: (p, s, h) => {},
+  setup: (p, pc, s, h) => {},
   reset: () => {},
 
   // btc | evm | solana | tron
@@ -47,6 +48,7 @@ const StoreProvider = ({ children }) => {
   const [connectivity, setConnectivity] = useState(true);
   // key parts
   const [password, setPassword] = useState("");
+  const [passcode, setPasscode] = useState("");
   const [salt, setSalt] = useState("");
   const [hash, setHash] = useState("");
 
@@ -110,6 +112,7 @@ const StoreProvider = ({ children }) => {
 
   const reset = () => {
     setPassword("");
+    setPasscode("");
     setSalt("");
     setHash("");
 
@@ -127,8 +130,9 @@ const StoreProvider = ({ children }) => {
     setSelectedTokenAddress("");
   };
 
-  const setup = (p, s, h) => {
-    setPassword(p);
+  const setup = (pw, pc, s, h) => {
+    setPassword(pw);
+    setPasscode(pc);
     setSalt(s);
     setHash(h);
   };
@@ -182,6 +186,7 @@ const StoreProvider = ({ children }) => {
       value={{
         connectivity,
         password,
+        passcode,
         salt,
         hash,
         reset,

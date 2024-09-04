@@ -1,6 +1,6 @@
 import React, { useContext, useState, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
-import { NETWORKS, joinPasswordAndSalt } from "@mybucks/lib/conf";
+import { NETWORKS } from "@mybucks/lib/conf";
 import TokenRow from "./TokenRow";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
@@ -177,10 +177,6 @@ const EvmHome = () => {
   const backupPrivateKey = () => {
     copy(account.signer);
     toast("Private key copied into clipboard.");
-  };
-  const backupPassword = () => {
-    copy(joinPasswordAndSalt(password, salt));
-    toast("Password copied into clipboard.");
   };
   const toggleBalancesVisible = () => {
     setBalancesVisible(!balancesVisible);
