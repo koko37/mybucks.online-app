@@ -22,7 +22,7 @@ export const StoreContext = createContext({
   setup: (p, pc, s, h) => {},
   reset: () => {},
 
-  // btc | evm | solana | tron
+  // evm | tron
   network: DEFAULT_NETWORK,
   chainId: DEFAULT_CHAIN_ID,
   account: null,

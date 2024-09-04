@@ -5,6 +5,7 @@ import {
   HASH_OPTIONS,
   PASSWORD_MIN_LENGTH,
   PASSCODE_LENGTH,
+  generateSalt,
 } from "@mybucks/lib/conf";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { Box } from "@mybucks/components/Containers";
@@ -138,7 +139,7 @@ const SignIn = () => {
   const [progress, setProgress] = useState(0);
 
   const salt = useMemo(
-    () => `${password.slice(-4)}${passcode}`,
+    () => generateSalt(password, passcode),
     [password, passcode]
   );
   const hasMinLength = useMemo(
