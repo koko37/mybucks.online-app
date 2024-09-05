@@ -13,7 +13,9 @@ export const HASH_OPTIONS = {
   keyLen: 64,
 };
 export const PASSWORD_MIN_LENGTH = 12;
-export const PASSCODE_LENGTH = 6;
+export const PASSWORD_MAX_LENGTH = 128;
+export const PASSCODE_MIN_LENGTH = 6;
+export const PASSCODE_MAX_LENGTH = 16;
 
 export const generateSalt = (password, passcode) =>
   `${password.slice(-4)}${passcode}`;

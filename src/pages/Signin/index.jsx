@@ -4,7 +4,9 @@ import { scrypt } from "scrypt-js";
 import {
   HASH_OPTIONS,
   PASSWORD_MIN_LENGTH,
-  PASSCODE_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  PASSCODE_MIN_LENGTH,
+  PASSCODE_MAX_LENGTH,
   generateSalt,
 } from "@mybucks/lib/conf";
 import { StoreContext } from "@mybucks/contexts/Store";
@@ -158,7 +160,7 @@ const SignIn = () => {
     [password, passwordConfirm]
   );
   const hasValidPasscodeLength = useMemo(
-    () => passcode.length >= PASSCODE_LENGTH,
+    () => passcode.length >= PASSCODE_MIN_LENGTH,
     [passcode]
   );
 
@@ -230,6 +232,7 @@ const SignIn = () => {
               placeholder="Password"
               disabled={disabled}
               value={password}
+              maxLength={PASSWORD_MAX_LENGTH}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={onKeyDown}
               onPaste={(e) => e.preventDefault()}
@@ -244,6 +247,7 @@ const SignIn = () => {
               placeholder="Confirm password"
               disabled={disabled}
               value={passwordConfirm}
+              maxLength={PASSWORD_MAX_LENGTH}
               onChange={(e) => setPasswordConfirm(e.target.value)}
               onKeyDown={onKeyDown}
               onPaste={(e) => e.preventDefault()}
@@ -258,6 +262,7 @@ const SignIn = () => {
               placeholder="Passcode"
               disabled={disabled}
               value={passcode}
+              maxLength={PASSCODE_MAX_LENGTH}
               onChange={(e) => setPasscode(e.target.value)}
               onKeyDown={onKeyDown}
             />
@@ -265,7 +270,7 @@ const SignIn = () => {
 
           <CheckboxesWrapper>
             <Checkbox id="min-length" value={hasMinLength}>
-              Password length: &gt;={PASSWORD_MIN_LENGTH}
+              Password length: {PASSWORD_MIN_LENGTH}~{PASSWORD_MAX_LENGTH}
             </Checkbox>
             <Checkbox id="uppercase" value={hasUppercase}>
               Uppercase (A~Z)
@@ -283,7 +288,7 @@ const SignIn = () => {
               Match password
             </Checkbox>
             <Checkbox id="passcode-length" value={hasValidPasscodeLength}>
-              Passcode length: &gt;={PASSCODE_LENGTH}
+              Passcode length: {PASSCODE_MIN_LENGTH}~{PASSCODE_MAX_LENGTH}
             </Checkbox>
           </CheckboxesWrapper>
 
