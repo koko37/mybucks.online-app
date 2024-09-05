@@ -54,7 +54,7 @@ That's all! 🎉
 
 ## Generate the private key
 
-This demonstrates how to generate a private key from your password and helps you understand the process.
+This demonstrates how to generate a private key from your `password` and `passcode` and helps you understand the process.
 
 ```javascript
 import { Buffer } from "buffer";
@@ -68,10 +68,10 @@ const HASH_OPTIONS = {
   keyLen: 64,
 };
 
-async function generatePrivateKey(rawPassword) {
-  // separate even, odds characters from the rawPassword
-  const password = rawPassword.split().filter((, index) => index % 2 === 0).join("")
-  const salt = rawPassword.split().filter((, index) => index % 2 === 1).join("")
+// password: at least 12 characters user input, lowercase, uppercase, digits, and special characters
+// passcode: at least 6 characters
+async function generatePrivateKey(password, passcode) {
+  const salt = `${password.slice(-4)}${passcode}`
 
   const passwordBuffer = Buffer.from(password);
   const saltBuffer = Buffer.from(salt);
@@ -97,7 +97,7 @@ async function generatePrivateKey(rawPassword) {
 You can transfer all your holdings to family or friends in a few seconds by sharing your password only.
 
 ```
-mybucks.online / mYpAssword987^5
+mybucks.online / mYpAssword987^5 : 239a8b
 ```
 
 Send this short note to your friend in a private channel.
@@ -120,6 +120,8 @@ This is a fully open-source project built with React, Vite, and related third-pa
 - **styled-components**
 
 ## How to Run
+
+Please sign up for [Infura](https://infura.io) and [GoldRush](https://goldrush.dev/), create free API keys, and update the environment variables accordingly.
 
 ```bash
 yarn install
@@ -146,26 +148,21 @@ Server:		127.0.0.53
 Address:	127.0.0.53#53
 
 Non-authoritative answer:
-app.mybucks.online	canonical name = koko37.github.io.
-Name:	koko37.github.io
-~~~~~~~~~~~~~~~~~~~~~~~~
+app.mybucks.online	canonical name = mybucks-online.github.io.
+Name:	mybucks-online.github.io
+
+~~~
 ```
 
 ```bash
 dig app.mybucks.online
 
-; <<>> DiG 9.18.28-0ubuntu0.22.04.1-Ubuntu <<>> app.mybucks.online
-;; global options: +cmd
-;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 26113
-;; flags: qr rd ra; QUERY: 1, ANSWER: 5, AUTHORITY: 5, ADDITIONAL: 11
-
-;; OPT PSEUDOSECTION:
-; EDNS: version: 0, flags:; udp: 65494
-;; QUESTION SECTION:
-;app.mybucks.online.		IN	A
-
 ;; ANSWER SECTION:
-app.mybucks.online.	5	IN	CNAME	koko37.github.io.
-~~~~~~~~~~~~~~~~~~~~~~~~
+app.mybucks.online.	5	IN	CNAME	https://mybucks-online.github.io.
+https://mybucks-online.github.io. 5 IN	A	185.199.110.153
+https://mybucks-online.github.io. 5 IN	A	185.199.109.153
+https://mybucks-online.github.io. 5 IN	A	185.199.108.153
+https://mybucks-online.github.io. 5 IN	A	185.199.111.153
+
+~~~
 ```
