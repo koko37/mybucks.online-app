@@ -142,11 +142,16 @@ const StoreProvider = ({ children }) => {
   const fetchBalances = async () => {
     setLoading(true);
     try {
-      const { data } =
+      const { data, error } =
         await client.BalanceService.getTokenBalancesForWalletAddress(
           chainId,
           account.address
         );
+      if (error) {
+        setConnectivity(false);
+        setLoading(false);
+        return;
+      }
       const tokens = camelcaseKeys(data.items, { deep: true });
       setTokenBalances(
         tokens
