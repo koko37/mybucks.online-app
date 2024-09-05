@@ -232,6 +232,7 @@ const SignIn = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={onKeyDown}
+              onPaste={(e) => e.preventDefault()}
             />
           </div>
 
@@ -245,6 +246,7 @@ const SignIn = () => {
               value={passwordConfirm}
               onChange={(e) => setPasswordConfirm(e.target.value)}
               onKeyDown={onKeyDown}
+              onPaste={(e) => e.preventDefault()}
             />
           </div>
 

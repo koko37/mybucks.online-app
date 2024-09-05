@@ -147,8 +147,6 @@ const TokensList = styled.div`
 
 const EvmHome = () => {
   const {
-    password,
-    salt,
     account,
     chainId,
     updateChain,
