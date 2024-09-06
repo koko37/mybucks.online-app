@@ -29,6 +29,8 @@ export const StoreContext = createContext({
   updateChain: (c) => {},
 
   loading: false,
+  inMenu: false,
+  openMenu: (m) => {},
 
   nativeTokenName: DEFAULT_ASSET,
   nativeBalance: 0,
@@ -59,6 +61,7 @@ const StoreProvider = ({ children }) => {
 
   // common
   const [loading, setLoading] = useState(false);
+  const [inMenu, openMenu] = useState(false);
 
   // balances related
   const [nativeTokenName, setNativeTokenName] = useState(DEFAULT_ASSET);
@@ -72,7 +75,7 @@ const StoreProvider = ({ children }) => {
   // unique counter that increments regularly
   const [tick, setTick] = useState(0);
 
-  const [selectedTokenAddress, setSelectedTokenAddress] = useState("");
+  const [selectedTokenAddress, selectToken] = useState("");
 
   useEffect(() => {
     if (hash) {
@@ -127,7 +130,7 @@ const StoreProvider = ({ children }) => {
     setTokenBalances([]);
     setNftBalances([]);
 
-    setSelectedTokenAddress("");
+    selectToken("");
   };
 
   const setup = (pw, pc, s, h) => {
@@ -182,8 +185,6 @@ const StoreProvider = ({ children }) => {
     }
   };
 
-  const selectToken = (t) => setSelectedTokenAddress(t);
-
   return (
     <StoreContext.Provider
       value={{
@@ -199,6 +200,8 @@ const StoreProvider = ({ children }) => {
         account,
         updateChain,
         loading,
+        inMenu,
+        openMenu,
         nativeTokenName,
         nativeBalance,
         tokenBalances,
