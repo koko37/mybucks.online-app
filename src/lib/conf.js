@@ -17,6 +17,8 @@ export const PASSWORD_MAX_LENGTH = 128;
 export const PASSCODE_MIN_LENGTH = 6;
 export const PASSCODE_MAX_LENGTH = 16;
 
+export const PASSCODE_MAX_TRY = 3;
+
 export const generateSalt = (password, passcode) =>
   `${password.slice(-4)}${passcode}`;
 export const getEvmPrivateKey = (h) =>

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
 import styled from "styled-components";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ import BackIcon from "@mybucks/assets/icons/back.svg";
 
 import { Container, Box as BaseBox } from "@mybucks/components/Containers";
 import BaseButton from "@mybucks/components/Button";
+import ConfirmPasscodeModal from "@mybucks/components/ConfirmPasscodeModal";
 import { H3 } from "@mybucks/components/Texts";
 
 const Box = styled(BaseBox)`
@@ -42,6 +43,8 @@ const Button = styled(BaseButton)`
 `;
 
 const Menu = () => {
+  const [confirmPasscode, setConfirmPasscode] = useState(false);
+  const [isBackupPassword, setIsBackupPassword] = useState(false);
   const { openMenu, account, password, passcode } = useContext(StoreContext);
 
   const backupAddress = () => {
@@ -59,23 +62,50 @@ const Menu = () => {
     toast("Password copied into clipboard.");
   };
 
+  const onClickPassword = () => {
+    setIsBackupPassword(true);
+    setConfirmPasscode(true);
+  };
+
+  const onClickPrivateKey = () => {
+    setIsBackupPassword(false);
+    setConfirmPasscode(true);
+  };
+
+  const onConfirmedPasscode = () => {
+    setConfirmPasscode(false);
+    if (isBackupPassword) {
+      backupPasswords();
+    } else {
+      backupPrivateKey();
+    }
+  };
+
   return (
-    <Container>
-      <NavsWrapper>
-        <button onClick={() => openMenu(false)}>
-          <img src={BackIcon} />
-        </button>
-      </NavsWrapper>
+    <>
+      <Container>
+        <NavsWrapper>
+          <button onClick={() => openMenu(false)}>
+            <img src={BackIcon} />
+          </button>
+        </NavsWrapper>
 
-      <Box>
-        <Title>Backup Account</Title>
-        <Address>{account.address}</Address>
+        <Box>
+          <Title>Backup Account</Title>
+          <Address>{account.address}</Address>
 
-        <Button onClick={backupAddress}>Address</Button>
-        <Button>Password</Button>
-        <Button>Private Key</Button>
-      </Box>
-    </Container>
+          <Button onClick={backupAddress}>Address</Button>
+          <Button onClick={onClickPassword}>Password</Button>
+          <Button onClick={onClickPrivateKey}>Private Key</Button>
+        </Box>
+      </Container>
+
+      <ConfirmPasscodeModal
+        show={confirmPasscode}
+        onFailed={() => setConfirmPasscode(false)}
+        onSuccess={onConfirmedPasscode}
+      />
+    </>
   );
 };
 

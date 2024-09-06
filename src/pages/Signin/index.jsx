@@ -1,6 +1,7 @@
 import React, { useContext, useState, useMemo } from "react";
 import { Buffer } from "buffer";
 import { scrypt } from "scrypt-js";
+import styled from "styled-components";
 import {
   HASH_OPTIONS,
   PASSWORD_MIN_LENGTH,
@@ -17,7 +18,7 @@ import Checkbox from "@mybucks/components/Checkbox";
 import Progress from "@mybucks/components/Progress";
 import { Label } from "@mybucks/components/Label";
 import { H1 } from "@mybucks/components/Texts";
-import styled from "styled-components";
+import Modal from "@mybucks/components/Modal";
 import media from "@mybucks/styles/media";
 
 const TEST_PASSWORD = "randommPassword82^";
@@ -103,16 +104,13 @@ const CheckboxesWrapper = styled.div`
 `;
 
 const ProgressWrapper = styled.div`
-  position: fixed;
-  inset: 0;
-  background: #fffd;
+  background: ${({ theme }) => theme.colors.gray25};
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 2rem;
-  margin-block-start: -8rem;
+  gap: ${({ theme }) => theme.sizes.base};
+  padding: ${({ theme }) => theme.sizes.base};
 
   progress {
     max-width: 16rem;
@@ -298,13 +296,13 @@ const SignIn = () => {
         </Box>
       </Container>
 
-      {!!progress && (
+      <Modal show={!!progress} width="20rem">
         <ProgressWrapper>
           <img src="/logo-72x72.png" alt="mybucks.online" />
           <Notice>Hang on, it takes millions of years to brute force!</Notice>
           <Progress value={progress} max="100" />
         </ProgressWrapper>
-      )}
+      </Modal>
     </>
   );
 };
