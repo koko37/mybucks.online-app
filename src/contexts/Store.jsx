@@ -148,9 +148,7 @@ const StoreProvider = ({ children }) => {
           account.address
         );
       if (error) {
-        setConnectivity(false);
-        setLoading(false);
-        return;
+        throw new Error("invalid balances");
       }
       const tokens = camelcaseKeys(data.items, { deep: true });
       setTokenBalances(
