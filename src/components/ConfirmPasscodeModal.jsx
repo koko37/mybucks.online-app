@@ -43,28 +43,23 @@ const ConfirmPasscodeModal = ({ show, onSuccess, onFailed }) => {
       return;
     }
 
-    if (passcode !== value) {
-      setInvalid(true);
-      setCounter(counter + 1);
+    setInvalid(passcode !== value);
 
+    if (passcode !== value) {
+      setCounter(counter + 1);
       if (counter + 1 >= PASSCODE_MAX_TRY) {
         toast("Wrong passcode!");
-
-        setValue("");
-        setInvalid(false);
-        setCounter(0);
         onFailed();
       } else {
         return;
       }
     } else {
-      setInvalid(false);
+      onSuccess();
     }
 
     setValue("");
     setInvalid(false);
     setCounter(0);
-    onSuccess();
   };
 
   const onClose = () => {
