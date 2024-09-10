@@ -1,10 +1,14 @@
 import React, { useContext, useState, useMemo } from "react";
 import { Buffer } from "buffer";
 import { scrypt } from "scrypt-js";
+import styled from "styled-components";
 import {
   HASH_OPTIONS,
-  RAW_PASSWORD_MIN_LENGTH,
-  splitPasswordAndSalt,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  PASSCODE_MIN_LENGTH,
+  PASSCODE_MAX_LENGTH,
+  generateSalt,
 } from "@mybucks/lib/conf";
 import { StoreContext } from "@mybucks/contexts/Store";
 import { Box } from "@mybucks/components/Containers";
@@ -14,10 +18,11 @@ import Checkbox from "@mybucks/components/Checkbox";
 import Progress from "@mybucks/components/Progress";
 import { Label } from "@mybucks/components/Label";
 import { H1 } from "@mybucks/components/Texts";
-import styled from "styled-components";
+import Modal from "@mybucks/components/Modal";
 import media from "@mybucks/styles/media";
 
 const TEST_PASSWORD = "randommPassword82^";
+const TEST_PASSCODE = "223356";
 
 const Container = styled.div`
   max-width: 40.5rem;
@@ -35,7 +40,7 @@ const LogoWrapper = styled.a`
   justify-content: center;
   align-items: center;
   gap: ${({ theme }) => theme.sizes.base};
-  margin-bottom: ${({ theme }) => theme.sizes.x4l};
+  margin-bottom: ${({ theme }) => theme.sizes.xl};
 
   img {
     width: 3rem;
@@ -43,8 +48,6 @@ const LogoWrapper = styled.a`
   }
 
   ${media.sm`
-    margin-bottom: ${({ theme }) => theme.sizes.xl};
-
     img {
       width: 2.5rem;
       height: 2.5rem;
@@ -87,7 +90,7 @@ const Caption = styled.p`
 `;
 
 const CheckboxesWrapper = styled.div`
-  margin: 2rem 0;
+  margin: 1rem 0;
   display: flex;
   flex-wrap: wrap;
 
@@ -101,16 +104,13 @@ const CheckboxesWrapper = styled.div`
 `;
 
 const ProgressWrapper = styled.div`
-  position: fixed;
-  inset: 0;
-  background: #fffd;
+  background: ${({ theme }) => theme.colors.gray25};
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 2rem;
-  margin-block-start: -8rem;
+  gap: ${({ theme }) => theme.sizes.base};
+  padding: ${({ theme }) => theme.sizes.base};
 
   progress {
     max-width: 16rem;
@@ -126,50 +126,55 @@ const Notice = styled.p`
 const SignIn = () => {
   const { setup } = useContext(StoreContext);
 
-  const [rawPassword, setRawPassword] = useState(
+  const [password, setPassword] = useState(
     import.meta.env.DEV ? TEST_PASSWORD : ""
   );
-  const [rawPasswordConfirm, setRawPasswordConfirm] = useState(
+  const [passwordConfirm, setPasswordConfirm] = useState(
     import.meta.env.DEV ? TEST_PASSWORD : ""
+  );
+  const [passcode, setPasscode] = useState(
+    import.meta.env.DEV ? TEST_PASSCODE : ""
   );
   const [disabled, setDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const [password, salt] = useMemo(
-    () => splitPasswordAndSalt(rawPassword),
-    [rawPassword]
+  const salt = useMemo(
+    () => generateSalt(password, passcode),
+    [password, passcode]
   );
   const hasMinLength = useMemo(
-    () => rawPassword.length >= RAW_PASSWORD_MIN_LENGTH,
-    [rawPassword]
+    () => password.length >= PASSWORD_MIN_LENGTH,
+    [password]
   );
-  const hasLowercase = useMemo(() => /[a-z]/.test(rawPassword), [rawPassword]);
-  const hasUppercase = useMemo(() => /[A-Z]/.test(rawPassword), [rawPassword]);
-  const hasNumbers = useMemo(() => /\d/.test(rawPassword), [rawPassword]);
+  const hasLowercase = useMemo(() => /[a-z]/.test(password), [password]);
+  const hasUppercase = useMemo(() => /[A-Z]/.test(password), [password]);
+  const hasNumbers = useMemo(() => /\d/.test(password), [password]);
   const hasSpecialChars = useMemo(
-    () => /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(rawPassword),
-    [rawPassword]
+    () => /[ !"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password),
+    [password]
   );
   const hasMatchedPassword = useMemo(
-    () => rawPassword && rawPassword === rawPasswordConfirm,
-    [rawPassword, rawPasswordConfirm]
+    () => password && password === passwordConfirm,
+    [password, passwordConfirm]
   );
-  const hasEmpty = useMemo(
-    () => !rawPassword || !password || !salt,
-    [rawPassword, rawPasswordConfirm]
+  const hasValidPasscodeLength = useMemo(
+    () => passcode.length >= PASSCODE_MIN_LENGTH,
+    [passcode]
   );
 
   const hasInvalidInput = useMemo(
     () =>
       disabled ||
-      hasEmpty ||
+      !password ||
+      !passcode ||
       !hasMinLength ||
-      !hasUppercase ||
       !hasLowercase ||
+      !hasUppercase ||
       !hasNumbers ||
       !hasSpecialChars ||
-      !hasMatchedPassword,
-    [[rawPassword, rawPasswordConfirm, disabled]]
+      !hasMatchedPassword ||
+      !hasValidPasscodeLength,
+    [[password, passwordConfirm, passcode, disabled]]
   );
 
   const onSubmit = async () => {
@@ -187,7 +192,7 @@ const SignIn = () => {
         (p) => setProgress(Math.floor(p * 100))
       );
       const hashHex = Buffer.from(hashBuffer).toString("hex");
-      setup(password, salt, hashHex);
+      setup(password, passcode, salt, hashHex);
     } catch (e) {
       console.error("Error while setting up account ...");
     } finally {
@@ -224,9 +229,11 @@ const SignIn = () => {
               type="password"
               placeholder="Password"
               disabled={disabled}
-              value={rawPassword}
-              onChange={(e) => setRawPassword(e.target.value)}
+              value={password}
+              maxLength={PASSWORD_MAX_LENGTH}
+              onChange={(e) => setPassword(e.target.value)}
               onKeyDown={onKeyDown}
+              onPaste={(e) => e.preventDefault()}
             />
           </div>
 
@@ -237,15 +244,31 @@ const SignIn = () => {
               type="password"
               placeholder="Confirm password"
               disabled={disabled}
-              value={rawPasswordConfirm}
-              onChange={(e) => setRawPasswordConfirm(e.target.value)}
+              value={passwordConfirm}
+              maxLength={PASSWORD_MAX_LENGTH}
+              onChange={(e) => setPasswordConfirm(e.target.value)}
+              onKeyDown={onKeyDown}
+              onPaste={(e) => e.preventDefault()}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="passcode">Passcode</Label>
+            <Input
+              id="passcode"
+              type="text"
+              placeholder="Passcode"
+              disabled={disabled}
+              value={passcode}
+              maxLength={PASSCODE_MAX_LENGTH}
+              onChange={(e) => setPasscode(e.target.value)}
               onKeyDown={onKeyDown}
             />
           </div>
 
           <CheckboxesWrapper>
             <Checkbox id="min-length" value={hasMinLength}>
-              Min length: {RAW_PASSWORD_MIN_LENGTH}
+              Password length: {PASSWORD_MIN_LENGTH}~{PASSWORD_MAX_LENGTH}
             </Checkbox>
             <Checkbox id="uppercase" value={hasUppercase}>
               Uppercase (A~Z)
@@ -262,6 +285,9 @@ const SignIn = () => {
             <Checkbox id="match-password" value={hasMatchedPassword}>
               Match password
             </Checkbox>
+            <Checkbox id="passcode-length" value={hasValidPasscodeLength}>
+              Passcode length: {PASSCODE_MIN_LENGTH}~{PASSCODE_MAX_LENGTH}
+            </Checkbox>
           </CheckboxesWrapper>
 
           <Button onClick={onSubmit} disabled={hasInvalidInput} $size="block">
@@ -270,13 +296,13 @@ const SignIn = () => {
         </Box>
       </Container>
 
-      {!!progress && (
+      <Modal show={!!progress} width="20rem">
         <ProgressWrapper>
           <img src="/logo-72x72.png" alt="mybucks.online" />
           <Notice>Hang on, it takes millions of years to brute force!</Notice>
           <Progress value={progress} max="100" />
         </ProgressWrapper>
-      )}
+      </Modal>
     </>
   );
 };

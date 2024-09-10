@@ -12,34 +12,20 @@ export const HASH_OPTIONS = {
   p: import.meta.env.DEV ? 1 : 5, // parallelization parameter
   keyLen: 64,
 };
+export const PASSWORD_MIN_LENGTH = 12;
+export const PASSWORD_MAX_LENGTH = 128;
+export const PASSCODE_MIN_LENGTH = 6;
+export const PASSCODE_MAX_LENGTH = 16;
 
-export const RAW_PASSWORD_MIN_LENGTH = 12;
+export const PASSCODE_MAX_TRY = 3;
 
-export const splitPasswordAndSalt = (rawPassword) => [
-  rawPassword
-    .split("")
-    .filter((v, id) => id % 2 === 0)
-    .join(""),
-  rawPassword
-    .split("")
-    .filter((v, id) => id % 2 === 1)
-    .join(""),
-];
-
-export const joinPasswordAndSalt = (password, salt) =>
-  password
-    .split("")
-    .map((p, i) => `${p}${salt[i] || ""}`)
-    .join("");
-
+export const generateSalt = (password, passcode) =>
+  `${password.slice(-4)}${passcode}`;
 export const getEvmPrivateKey = (h) =>
   ethers.keccak256(abi.encode(["string"], [h]));
 
-// btc | evm | solana | tron
-export const NETWORK_BTC = "btc";
 export const NETWORK_EVM = "evm";
 export const NETWORK_TRON = "tron";
-export const NETWORK_SOLANA = "sol";
 
 export const DEFAULT_NETWORK = NETWORK_EVM;
 export const DEFAULT_CHAIN_ID = 1;
@@ -50,7 +36,8 @@ export const NETWORKS = {
     chainId: 1,
     name: "ethereum",
     label: "Ethereum",
-    provider: "https://mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    provider:
+      "https://mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
     scanner: "https://etherscan.io",
   },
   56: {
@@ -64,42 +51,54 @@ export const NETWORKS = {
     chainId: 137,
     name: "polygon",
     label: "Polygon",
-    provider: "https://polygon-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    provider:
+      "https://polygon-mainnet.infura.io/v3/" +
+      import.meta.env.VITE_INFURA_API_KEY,
     scanner: "https://polygonscan.com",
   },
   42161: {
     chainId: 42161,
     name: "arbitrum",
     label: "Arbitrum",
-    provider: "https://arbitrum-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    provider:
+      "https://arbitrum-mainnet.infura.io/v3/" +
+      import.meta.env.VITE_INFURA_API_KEY,
     scanner: "https://arbiscan.io",
   },
   43114: {
     chainId: 43114,
     name: "avalanche",
     label: "Avalanche C-Chain",
-    provider: "https://avalanche-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    provider:
+      "https://avalanche-mainnet.infura.io/v3/" +
+      import.meta.env.VITE_INFURA_API_KEY,
     scanner: "https://snowtrace.io",
   },
   10: {
     chainId: 10,
     name: "optimism",
     label: "Optimism",
-    provider: "https://optimism-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    provider:
+      "https://optimism-mainnet.infura.io/v3/" +
+      import.meta.env.VITE_INFURA_API_KEY,
     scanner: "https://optimistic.etherscan.io",
   },
   59144: {
     chainId: 59144,
     name: "linea",
     label: "Linea",
-    provider: "https://linea-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    provider:
+      "https://linea-mainnet.infura.io/v3/" +
+      import.meta.env.VITE_INFURA_API_KEY,
     scanner: "https://lineascan.build",
   },
   42220: {
     chainId: 42220,
     name: "celo",
     label: "Celo",
-    provider: "https://celo-mainnet.infura.io/v3/" + import.meta.env.VITE_INFURA_API_KEY,
+    provider:
+      "https://celo-mainnet.infura.io/v3/" +
+      import.meta.env.VITE_INFURA_API_KEY,
     scanner: "https://celoscan.io",
   },
 };

@@ -78,6 +78,10 @@ const GlobalStyle = createGlobalStyle`
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
   }
+  .scroll-lock {
+    max-height: 100vh;
+    overflow: hidden;
+  }
 `;
 
 export default GlobalStyle;

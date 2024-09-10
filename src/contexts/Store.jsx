@@ -16,18 +16,21 @@ const client = new CovalentClient(import.meta.env.VITE_COVALENT_API_KEY);
 export const StoreContext = createContext({
   connectivity: true,
   password: "",
+  passcode: "",
   salt: "",
   hash: "",
-  setup: (p, s, h) => {},
+  setup: (p, pc, s, h) => {},
   reset: () => {},
 
-  // btc | evm | solana | tron
+  // evm | tron
   network: DEFAULT_NETWORK,
   chainId: DEFAULT_CHAIN_ID,
   account: null,
   updateChain: (c) => {},
 
   loading: false,
+  inMenu: false,
+  openMenu: (m) => {},
 
   nativeTokenName: DEFAULT_ASSET,
   nativeBalance: 0,
@@ -47,6 +50,7 @@ const StoreProvider = ({ children }) => {
   const [connectivity, setConnectivity] = useState(true);
   // key parts
   const [password, setPassword] = useState("");
+  const [passcode, setPasscode] = useState("");
   const [salt, setSalt] = useState("");
   const [hash, setHash] = useState("");
 
@@ -57,6 +61,7 @@ const StoreProvider = ({ children }) => {
 
   // common
   const [loading, setLoading] = useState(false);
+  const [inMenu, openMenu] = useState(false);
 
   // balances related
   const [nativeTokenName, setNativeTokenName] = useState(DEFAULT_ASSET);
@@ -70,7 +75,7 @@ const StoreProvider = ({ children }) => {
   // unique counter that increments regularly
   const [tick, setTick] = useState(0);
 
-  const [selectedTokenAddress, setSelectedTokenAddress] = useState("");
+  const [selectedTokenAddress, selectToken] = useState("");
 
   useEffect(() => {
     if (hash) {
@@ -110,6 +115,7 @@ const StoreProvider = ({ children }) => {
 
   const reset = () => {
     setPassword("");
+    setPasscode("");
     setSalt("");
     setHash("");
 
@@ -124,11 +130,12 @@ const StoreProvider = ({ children }) => {
     setTokenBalances([]);
     setNftBalances([]);
 
-    setSelectedTokenAddress("");
+    selectToken("");
   };
 
-  const setup = (p, s, h) => {
-    setPassword(p);
+  const setup = (pw, pc, s, h) => {
+    setPassword(pw);
+    setPasscode(pc);
     setSalt(s);
     setHash(h);
   };
@@ -138,11 +145,14 @@ const StoreProvider = ({ children }) => {
   const fetchBalances = async () => {
     setLoading(true);
     try {
-      const { data } =
+      const { data, error } =
         await client.BalanceService.getTokenBalancesForWalletAddress(
           chainId,
           account.address
         );
+      if (error) {
+        throw new Error("invalid balances");
+      }
       const tokens = camelcaseKeys(data.items, { deep: true });
       setTokenBalances(
         tokens
@@ -175,13 +185,12 @@ const StoreProvider = ({ children }) => {
     }
   };
 
-  const selectToken = (t) => setSelectedTokenAddress(t);
-
   return (
     <StoreContext.Provider
       value={{
         connectivity,
         password,
+        passcode,
         salt,
         hash,
         reset,
@@ -191,6 +200,8 @@ const StoreProvider = ({ children }) => {
         account,
         updateChain,
         loading,
+        inMenu,
+        openMenu,
         nativeTokenName,
         nativeBalance,
         tokenBalances,

@@ -48,6 +48,7 @@ const Button = styled.button`
 
   line-height: 140%;
   border-radius: ${({ theme }) => theme.radius.base};
+  outline: none;
 
   &:disabled {
     background-color: ${({ theme }) => theme.colors.gray100};

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
-import { NETWORKS, joinPasswordAndSalt } from "@mybucks/lib/conf";
+import { NETWORKS } from "@mybucks/lib/conf";
 import TokenRow from "./TokenRow";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
@@ -54,13 +54,13 @@ const GasPriceWrapper = styled.div`
   font-size: ${({ theme }) => theme.sizes.sm};
 `;
 
-const BackupButton = styled(BaseButton).attrs({ $size: "small" })`
+const MenuButton = styled(BaseButton).attrs({ $size: "small" })`
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 6px 8px;
 
-  ${media.md`
+  ${media.sm`
     span {
       display: none;
     }
@@ -147,13 +147,12 @@ const TokensList = styled.div`
 
 const EvmHome = () => {
   const {
-    password,
-    salt,
+    loading,
+    openMenu,
     account,
     chainId,
     updateChain,
     reset,
-    loading,
     nativeTokenName,
     nativeBalance,
     tokenBalances,
@@ -173,14 +172,6 @@ const EvmHome = () => {
   const copyAddress = () => {
     copy(account.address);
     toast("Address copied into clipboard.");
-  };
-  const backupPrivateKey = () => {
-    copy(account.signer);
-    toast("Private key copied into clipboard.");
-  };
-  const backupPassword = () => {
-    copy(joinPasswordAndSalt(password, salt));
-    toast("Password copied into clipboard.");
   };
   const toggleBalancesVisible = () => {
     setBalancesVisible(!balancesVisible);
@@ -206,9 +197,9 @@ const EvmHome = () => {
           </GasPriceWrapper>
         </NetworkWrapper>
 
-        <BackupButton onClick={backupPrivateKey}>
-          <img src={ArrowUpIcon} /> <span>Backup Private Key</span>
-        </BackupButton>
+        <MenuButton onClick={() => openMenu(true)}>
+          <img src={ArrowUpIcon} /> <span>Backup</span>
+        </MenuButton>
 
         <CloseButton onClick={close}>
           <img src={LockIcon} />

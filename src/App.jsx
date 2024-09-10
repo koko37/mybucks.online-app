@@ -9,6 +9,7 @@ import styled from "styled-components";
 import SignIn from "@mybucks/pages/Signin";
 import Home from "@mybucks/pages/Home";
 import Token from "./pages/Token";
+import Menu from "./pages/Menu";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -26,7 +27,7 @@ const ConnectionIssue = styled.div`
 `;
 
 function App() {
-  const { connectivity, hash, account, selectedTokenAddress, reset } =
+  const { connectivity, hash, account, selectedTokenAddress, inMenu, reset } =
     useContext(StoreContext);
 
   useIdleTimer({
@@ -47,13 +48,17 @@ function App() {
           Please check your internet connection!
         </ConnectionIssue>
       )}
+
       {!hash || !account ? (
         <SignIn />
       ) : selectedTokenAddress ? (
         <Token />
+      ) : inMenu ? (
+        <Menu />
       ) : (
         <Home />
       )}
+
       <ToastContainer
         position="top-center"
         hideProgressBar={true}
