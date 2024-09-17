@@ -6,18 +6,18 @@ This is a **password-only crypto wallet** built with [React.js](https://react.de
 
 ## How to Use
 
-1. Visit `app.mybucks.online`
-2. Input your password and confirmation
-3. Click `Open`
+1. Visit `app.mybucks.online`.
+2. Input your password, confirmation, and passcode.
+3. Click `Open`.
 
 (This process is the same for both initial opening and all subsequent uses.)
 
-![Sign-in](/screenshots/Macbook-Air-mybucks.online.png)
+![Sign-in](/screenshots/1.sign-in.png)
 
 <p align="center">
-<img src="screenshots/iphone-13-signin.png" width="32%" alt="Sign-in">
-<img src="screenshots/iphone-13-dashboard.png" width="32%" alt="Dashboard">
-<img src="screenshots/iphone-13-transfer.png" width="32%" alt="Transfer">
+<img src="screenshots/iphone-13-signin.png" width="33%" alt="Sign-in">
+<img src="screenshots/iphone-13-dashboard.png" width="33%" alt="Dashboard">
+<img src="screenshots/iphone-13-transfer.png" width="33%" alt="Transfer">
 </p>
 
 ## Key Points
