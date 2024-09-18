@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useMemo } from "react";
 import EvmAccount from "@mybucks/lib/account";
 import {
   DEFAULT_CHAIN_ID,
@@ -11,9 +11,8 @@ import { ethers } from "ethers";
 import { CovalentClient } from "@covalenthq/client-sdk";
 import camelcaseKeys from "camelcase-keys";
 
-const client = new CovalentClient(import.meta.env.VITE_COVALENT_API_KEY);
-
 export const StoreContext = createContext({
+  client: null,
   connectivity: true,
   password: "",
   passcode: "",
@@ -47,6 +46,10 @@ export const StoreContext = createContext({
 });
 
 const StoreProvider = ({ children }) => {
+  const client = useMemo(
+    () => new CovalentClient(import.meta.env.VITE_COVALENT_API_KEY),
+    []
+  );
   const [connectivity, setConnectivity] = useState(true);
   // key parts
   const [password, setPassword] = useState("");
@@ -75,6 +78,7 @@ const StoreProvider = ({ children }) => {
   // unique counter that increments regularly
   const [tick, setTick] = useState(0);
 
+  // active token
   const [selectedTokenAddress, selectToken] = useState("");
 
   useEffect(() => {
@@ -188,6 +192,7 @@ const StoreProvider = ({ children }) => {
   return (
     <StoreContext.Provider
       value={{
+        client,
         connectivity,
         password,
         passcode,

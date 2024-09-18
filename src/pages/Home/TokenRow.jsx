@@ -87,7 +87,7 @@ const TokenRow = ({ token, balance, quote, onClick, balanceVisible }) => (
       <Balance>{balanceVisible ? Number(balance).toFixed(4) : "*****"}</Balance>
       <Value>
         {!!quote && balanceVisible
-          ? `\$${Number(quote).toFixed(2)}`
+          ? `$${Number(quote).toFixed(2)}`
           : !balanceVisible
           ? "*****"
           : ""}

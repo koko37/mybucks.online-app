@@ -51,6 +51,9 @@ const Modal = ({
     } else {
       document.querySelector("body")?.classList.remove("scroll-lock");
     }
+
+    return () =>
+      document.querySelector("body")?.classList.remove("scroll-lock");
   }, [show]);
 
   if (!show) {
