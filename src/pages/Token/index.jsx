@@ -260,7 +260,7 @@ const Token = () => {
       }
 
       setHasErrorInput(false);
-      const txData = !!token.nativeToken
+      const txData = token.nativeToken
         ? {
             to: recipient,
             value: ethers.parseEther(amount.toString()),
