@@ -12,6 +12,7 @@ import {
   truncate,
   explorerLinkOfTransaction,
   explorerLinkOfAddress,
+  explorerLinkOfContract
 } from "@mybucks/lib/utils";
 import BackIcon from "@mybucks/assets/icons/back.svg";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
@@ -19,13 +20,11 @@ import ArrowUpRightIcon from "@mybucks/assets/icons/arrow-up-right.svg";
 import InfoRedIcon from "@mybucks/assets/icons/info-red.svg";
 import InfoGreenIcon from "@mybucks/assets/icons/info-green.svg";
 
-import { explorerLinkOfContract } from "@mybucks/lib/utils";
-import Avatar from "@mybucks/components/Avatar";
-
 import {
   Container as BaseContainer,
   Box as BaseBox,
 } from "@mybucks/components/Containers";
+import Avatar from "@mybucks/components/Avatar";
 import Button from "@mybucks/components/Button";
 import Input from "@mybucks/components/Input";
 import { Label } from "@mybucks/components/Label";
