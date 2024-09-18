@@ -4,9 +4,16 @@ import ConfirmTransaction from "@mybucks/pages/ConfirmTransaction";
 import MinedTransaction from "@mybucks/pages/MinedTransaction";
 import { ethers } from "ethers";
 import styled from "styled-components";
-import { explorerLinkOfContract } from "@mybucks/lib/utils";
-import Avatar from "@mybucks/components/Avatar";
+import camelcaseKeys from "camelcase-keys";
+import { format } from "date-fns";
+import toFlexible from "toflexible";
 
+import {
+  truncate,
+  explorerLinkOfTransaction,
+  explorerLinkOfAddress,
+  explorerLinkOfContract
+} from "@mybucks/lib/utils";
 import BackIcon from "@mybucks/assets/icons/back.svg";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import ArrowUpRightIcon from "@mybucks/assets/icons/arrow-up-right.svg";
@@ -17,9 +24,11 @@ import {
   Container as BaseContainer,
   Box as BaseBox,
 } from "@mybucks/components/Containers";
+import Avatar from "@mybucks/components/Avatar";
 import Button from "@mybucks/components/Button";
 import Input from "@mybucks/components/Input";
 import { Label } from "@mybucks/components/Label";
+import Link from "@mybucks/components/Link";
 import { H3 } from "@mybucks/components/Texts";
 import media from "@mybucks/styles/media";
 
@@ -126,6 +135,40 @@ const Submit = styled(Button)`
   `}
 `;
 
+const HistoryTable = styled.table`
+  width: 100%;
+
+  td {
+    padding-bottom: 4px;
+  }
+`;
+
+const AmountTd = styled.td`
+  color: ${({ theme, $in }) =>
+    $in ? theme.colors.success : theme.colors.error};
+`;
+
+const AddressTd = styled.td`
+  ${media.sm`
+    display: none;
+  `}
+`;
+
+const AddressLinkLg = styled(Link)`
+  text-decoration: none;
+  ${media.md`
+    display: none;
+  `}
+`;
+
+const AddressLink = styled(Link)`
+  text-decoration: none;
+  display: none;
+  ${media.md`
+    display: inherit;
+  `}
+`;
+
 const Token = () => {
   const [hasErrorInput, setHasErrorInput] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -136,8 +179,10 @@ const Token = () => {
   const [amount, setAmount] = useState(0);
   const [gasEstimation, setGasEstimation] = useState(0);
   const [gasEstimationValue, setGasEstimationValue] = useState(0);
+  const [history, setHistory] = useState([]);
 
   const {
+    client,
     account,
     chainId,
     selectedTokenAddress,
@@ -158,6 +203,49 @@ const Token = () => {
   );
 
   useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const { data, error } =
+          await client.BalanceService.getErc20TransfersForWalletAddressByPage(
+            chainId,
+            account.address,
+            {
+              contractAddress: selectedTokenAddress.trim(),
+              pageNumber: 0,
+              pageSize: 5,
+            }
+          );
+        if (error) {
+          throw new Error("invalid history");
+        }
+
+        const items = camelcaseKeys(data.items, { deep: true });
+        setHistory(
+          items
+            .map(({ transfers }) =>
+              transfers.map((item) => ({
+                txHash: item.txHash,
+                transferType: item.transferType,
+                fromAddress: item.fromAddress,
+                toAddress: item.toAddress,
+                amount: item.delta,
+                decimals: item.contractDecimals,
+                time: item.blockSignedAt,
+              }))
+            )
+            .flat()
+        );
+      } catch (e) {
+        console.error("failed to fetch transfer history ...", e);
+      }
+    };
+
+    if (!token.nativeToken) {
+      fetchHistory();
+    }
+  }, []);
+
+  useEffect(() => {
     const estimateGas = async () => {
       if (!recipient || !amount) {
         setHasErrorInput(false);
@@ -172,7 +260,7 @@ const Token = () => {
       }
 
       setHasErrorInput(false);
-      const txData = !!token.nativeToken
+      const txData = token.nativeToken
         ? {
             to: recipient,
             value: ethers.parseEther(amount.toString()),
@@ -337,9 +425,69 @@ const Token = () => {
         </Submit>
       </Box>
 
-      <Box>
-        <H3>History</H3>
-      </Box>
+      {history.length > 0 && (
+        <Box>
+          <H3>Activity</H3>
+
+          <HistoryTable>
+            <tbody>
+              {history.map((item) => (
+                <tr key={item.txHash}>
+                  <td>{format(item.time, "MM/dd")}</td>
+                  <AddressTd>
+                    <AddressLinkLg
+                      href={explorerLinkOfAddress(
+                        chainId,
+                        item.transferType === "IN"
+                          ? item.fromAddress
+                          : item.toAddress
+                      )}
+                      target="_blank"
+                    >
+                      {item.transferType === "IN"
+                        ? item.fromAddress
+                        : item.toAddress}
+                    </AddressLinkLg>
+
+                    <AddressLink
+                      href={explorerLinkOfAddress(
+                        chainId,
+                        item.transferType === "IN"
+                          ? item.fromAddress
+                          : item.toAddress
+                      )}
+                      target="_blank"
+                    >
+                      {truncate(
+                        item.transferType === "IN"
+                          ? item.fromAddress
+                          : item.toAddress
+                      )}
+                    </AddressLink>
+                  </AddressTd>
+                  <AmountTd $in={item.transferType === "IN"}>
+                    {item.transferType === "IN" ? "+" : "-"}&nbsp;
+                    {toFlexible(
+                      parseFloat(
+                        ethers.formatUnits(item.amount, item.decimals)
+                      ),
+                      2
+                    )}
+                  </AmountTd>
+                  <td>
+                    <Link
+                      href={explorerLinkOfTransaction(chainId, item.txHash)}
+                      target="_blank"
+                    >
+                      details
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </HistoryTable>
+        </Box>
+      )}
     </Container>
   );
 };
