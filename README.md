@@ -2,7 +2,7 @@
 
 ## Summary
 
-This is a **password-only crypto wallet** built with [React.js](https://react.dev). It generates a private key from your password using an industry-standard, verified **one-way hash function**. Your private key forms your account, allowing you to transfer, receive, and hold your crypto assets permanently.
+Mybucks.online is a **password-only, self-custodial cryptocurrency wallet** built with [React.js](https://react.dev). It generates a private key from your password using an industry-standard, verified **one-way hash function**. Your private key forms your account, allowing you to transfer, receive, and hold your crypto assets permanently.
 
 ## How to Use
 
