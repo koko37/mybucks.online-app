@@ -35,7 +35,7 @@ class EvmAccount {
     return this.account && this.account.address;
   }
 
-  async getGasPrice() {
+  async getNetworkStatus() {
     const { gasPrice } = await this.provider.getFeeData();
     this.gasPrice = gasPrice;
   }
@@ -88,6 +88,43 @@ class EvmAccount {
 
       return [nativeTokenName, nativeTokenBalance, nativeTokenPrice, balances];
     } catch (e) {
+      console.error("failed to fetch balances ...");
+      return null;
+    }
+  }
+
+  async queryTokenHistory(contractAddress) {
+    try {
+      const { data, error } =
+        await this.queryClient.BalanceService.getErc20TransfersForWalletAddressByPage(
+          this.chainId,
+          this.account.address,
+          {
+            contractAddress,
+            pageNumber: 0,
+            pageSize: 5,
+          }
+        );
+      if (error) {
+        throw new Error("invalid history");
+      }
+
+      const items = camelcaseKeys(data.items, { deep: true });
+      return items
+        .map(({ transfers }) =>
+          transfers.map((item) => ({
+            txHash: item.txHash,
+            transferType: item.transferType,
+            fromAddress: item.fromAddress,
+            toAddress: item.toAddress,
+            amount: item.delta,
+            decimals: item.contractDecimals,
+            time: item.blockSignedAt,
+          }))
+        )
+        .flat();
+    } catch (e) {
+      console.error("failed to fetch token history ...");
       return null;
     }
   }

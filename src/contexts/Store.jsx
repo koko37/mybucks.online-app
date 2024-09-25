@@ -1,15 +1,14 @@
-import { createContext, useState, useEffect, useMemo } from "react";
+import { createContext, useState, useEffect } from "react";
 import EvmAccount from "@mybucks/lib/account";
 import {
   DEFAULT_CHAIN_ID,
   DEFAULT_NETWORK,
   DEFAULT_ASSET,
   NETWORK_EVM,
+  REFRESH_STATUS_DURATION,
 } from "@mybucks/lib/conf";
-import { CovalentClient } from "@covalenthq/client-sdk";
 
 export const StoreContext = createContext({
-  client: null,
   connectivity: true,
   password: "",
   passcode: "",
@@ -43,10 +42,6 @@ export const StoreContext = createContext({
 });
 
 const StoreProvider = ({ children }) => {
-  const client = useMemo(
-    () => new CovalentClient(import.meta.env.VITE_COVALENT_API_KEY),
-    []
-  );
   const [connectivity, setConnectivity] = useState(true);
   // key parts
   const [password, setPassword] = useState("");
@@ -90,14 +85,14 @@ const StoreProvider = ({ children }) => {
     if (!account) {
       return;
     }
-    account.getGasPrice().then(() => {
+    account.getNetworkStatus().then(() => {
       setTick((_tick) => _tick + 1);
     });
     fetchBalances();
 
-    const intervalId = setInterval(() => {
+    const timerId = setInterval(() => {
       account
-        .getGasPrice()
+        .getNetworkStatus()
         .then(() => {
           setConnectivity(true);
         })
@@ -107,10 +102,10 @@ const StoreProvider = ({ children }) => {
         .finally(() => {
           setTick((_tick) => _tick + 1);
         });
-    }, 15000);
+    }, REFRESH_STATUS_DURATION);
 
     return () => {
-      clearInterval(intervalId);
+      clearInterval(timerId);
     };
   }, [account]);
 
@@ -145,21 +140,17 @@ const StoreProvider = ({ children }) => {
 
   const fetchBalances = async () => {
     setLoading(true);
+    const result = await account.queryBalances();
 
-    try {
-      const result = await account.queryBalances();
-      if (!result) {
-        throw new Error("invalid balances");
-      }
+    if (result) {
       setNativeTokenName(result[0]);
       setNativeTokenBalance(result[1]);
       setNativeTokenPrice(result[2]);
       setTokenBalances(result[3]);
 
       setConnectivity(true);
-    } catch (e) {
+    } else {
       setConnectivity(false);
-      console.error("failed to fetch token balances ...");
     }
 
     setLoading(false);
@@ -168,7 +159,6 @@ const StoreProvider = ({ children }) => {
   return (
     <StoreContext.Provider
       value={{
-        client,
         connectivity,
         password,
         passcode,

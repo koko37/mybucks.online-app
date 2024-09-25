@@ -109,3 +109,6 @@ export const gasMultiplier = (option) =>
 
 // 15 minutes, after this period, wallet will be locked.
 export const IDLE_DURATION = 900_000;
+
+// in every 15 seconds, it refreshes gas price or network status
+export const REFRESH_STATUS_DURATION = 15_000;

@@ -4,7 +4,6 @@ import ConfirmTransaction from "@mybucks/pages/ConfirmTransaction";
 import MinedTransaction from "@mybucks/pages/MinedTransaction";
 import { ethers } from "ethers";
 import styled from "styled-components";
-import camelcaseKeys from "camelcase-keys";
 import { format } from "date-fns";
 import toFlexible from "toflexible";
 
@@ -12,7 +11,7 @@ import {
   truncate,
   explorerLinkOfTransaction,
   explorerLinkOfAddress,
-  explorerLinkOfContract
+  explorerLinkOfContract,
 } from "@mybucks/lib/utils";
 import BackIcon from "@mybucks/assets/icons/back.svg";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
@@ -182,7 +181,6 @@ const Token = () => {
   const [history, setHistory] = useState([]);
 
   const {
-    client,
     account,
     chainId,
     selectedTokenAddress,
@@ -203,45 +201,10 @@ const Token = () => {
   );
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const { data, error } =
-          await client.BalanceService.getErc20TransfersForWalletAddressByPage(
-            chainId,
-            account.address,
-            {
-              contractAddress: selectedTokenAddress.trim(),
-              pageNumber: 0,
-              pageSize: 5,
-            }
-          );
-        if (error) {
-          throw new Error("invalid history");
-        }
-
-        const items = camelcaseKeys(data.items, { deep: true });
-        setHistory(
-          items
-            .map(({ transfers }) =>
-              transfers.map((item) => ({
-                txHash: item.txHash,
-                transferType: item.transferType,
-                fromAddress: item.fromAddress,
-                toAddress: item.toAddress,
-                amount: item.delta,
-                decimals: item.contractDecimals,
-                time: item.blockSignedAt,
-              }))
-            )
-            .flat()
-        );
-      } catch (e) {
-        console.error("failed to fetch transfer history ...", e);
-      }
-    };
-
     if (!token.nativeToken) {
-      fetchHistory();
+      account.queryTokenHistory(selectedTokenAddress).then((result) => {
+        setHistory(result || []);
+      });
     }
   }, []);
 
