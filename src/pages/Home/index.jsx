@@ -154,7 +154,7 @@ const EvmHome = () => {
     updateChain,
     reset,
     nativeTokenName,
-    nativeBalance,
+    nativeTokenBalance,
     tokenBalances,
     tick,
     fetchBalances,
@@ -237,7 +237,7 @@ const EvmHome = () => {
             ? "-----"
             : !balancesVisible
             ? "*****"
-            : Number(nativeBalance).toFixed(4)}
+            : Number(nativeTokenBalance).toFixed(4)}
           &nbsp;
           {nativeTokenName}
         </NativeBalance>

@@ -29,7 +29,7 @@ export const StoreContext = createContext({
   openMenu: (m) => {},
 
   nativeTokenName: DEFAULT_ASSET,
-  nativeBalance: 0,
+  nativeTokenBalance: 0,
   tokenBalances: [],
   nftBalances: [],
 
@@ -65,7 +65,7 @@ const StoreProvider = ({ children }) => {
 
   // balances related
   const [nativeTokenName, setNativeTokenName] = useState(DEFAULT_ASSET);
-  const [nativeBalance, setNativeBalance] = useState(0);
+  const [nativeTokenBalance, setNativeTokenBalance] = useState(0);
   const [tokenBalances, setTokenBalances] = useState([]);
   const [nftBalances, setNftBalances] = useState([]);
 
@@ -127,7 +127,7 @@ const StoreProvider = ({ children }) => {
     setLoading(false);
 
     setNativeTokenName(DEFAULT_ASSET);
-    setNativeBalance(0);
+    setNativeTokenBalance(0);
     setTokenBalances([]);
     setNftBalances([]);
 
@@ -152,7 +152,7 @@ const StoreProvider = ({ children }) => {
         throw new Error("invalid balances");
       }
       setNativeTokenName(result[0]);
-      setNativeBalance(result[1]);
+      setNativeTokenBalance(result[1]);
       setNativeTokenPrice(result[2]);
       setTokenBalances(result[3]);
 
@@ -184,7 +184,7 @@ const StoreProvider = ({ children }) => {
         inMenu,
         openMenu,
         nativeTokenName,
-        nativeBalance,
+        nativeTokenBalance,
         tokenBalances,
         nftBalances,
         nativeTokenPrice,
