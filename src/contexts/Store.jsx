@@ -6,10 +6,7 @@ import {
   DEFAULT_ASSET,
   NETWORK_EVM,
 } from "@mybucks/lib/conf";
-import { tokens as defaultTokens } from "@sushiswap/default-token-list";
-import { ethers } from "ethers";
 import { CovalentClient } from "@covalenthq/client-sdk";
-import camelcaseKeys from "camelcase-keys";
 
 export const StoreContext = createContext({
   client: null,
@@ -148,45 +145,24 @@ const StoreProvider = ({ children }) => {
 
   const fetchBalances = async () => {
     setLoading(true);
+
     try {
-      const { data, error } =
-        await client.BalanceService.getTokenBalancesForWalletAddress(
-          chainId,
-          account.address
-        );
-      if (error) {
+      const result = await account.queryBalances();
+      if (!result) {
         throw new Error("invalid balances");
       }
-      const tokens = camelcaseKeys(data.items, { deep: true });
-      setTokenBalances(
-        tokens
-          .filter(
-            (token) => token.balance.toString() !== "0" || token.nativeToken
-          )
-          .map((token) => ({
-            ...token,
-            logoURI: defaultTokens.find((t) =>
-              token.nativeToken
-                ? t.name === token.contractName
-                : t.address.toLowerCase() ===
-                  token.contractAddress.toLowerCase()
-            )?.logoURI,
-          }))
-      );
-      setNativeBalance(
-        ethers.formatUnits(tokens.find((t) => !!t.nativeToken).balance, 18)
-      );
-      setNativeTokenName(
-        tokens.find((t) => !!t.nativeToken).contractTickerSymbol
-      );
-      setNativeTokenPrice(tokens.find((t) => !!t.nativeToken).quoteRate);
+      setNativeTokenName(result[0]);
+      setNativeBalance(result[1]);
+      setNativeTokenPrice(result[2]);
+      setTokenBalances(result[3]);
+
       setConnectivity(true);
     } catch (e) {
       setConnectivity(false);
       console.error("failed to fetch token balances ...");
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (

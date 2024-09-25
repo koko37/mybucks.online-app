@@ -1,4 +1,8 @@
 import { ethers, Contract } from "ethers";
+import { CovalentClient } from "@covalenthq/client-sdk";
+import camelcaseKeys from "camelcase-keys";
+import { tokens as defaultTokensList } from "@sushiswap/default-token-list";
+
 import { NETWORKS, getEvmPrivateKey } from "@mybucks/lib/conf";
 import IERC20 from "./erc20.json";
 
@@ -13,12 +17,18 @@ class EvmAccount {
   // wei unit
   gasPrice = 0;
 
+  queryClient = null;
+
   constructor(hashKey, chainId) {
     this.chainId = chainId;
     this.provider = new ethers.JsonRpcProvider(NETWORKS[chainId].provider);
 
     this.signer = getEvmPrivateKey(hashKey);
     this.account = new ethers.Wallet(this.signer, this.provider);
+
+    this.queryClient = new CovalentClient(
+      import.meta.env.VITE_COVALENT_API_KEY
+    );
   }
 
   get address() {
@@ -29,7 +39,60 @@ class EvmAccount {
     const { gasPrice } = await this.provider.getFeeData();
     this.gasPrice = gasPrice;
   }
-/*
+
+  async queryBalances() {
+    try {
+      const { data, error } =
+        await this.queryClient.BalanceService.getTokenBalancesForWalletAddress(
+          this.chainId,
+          this.account.address
+        );
+      if (error) {
+        throw new Error("invalid balances");
+      }
+      const tokens = camelcaseKeys(data.items, { deep: true });
+
+      const nativeTokenName = tokens.find(
+        (t) => !!t.nativeToken
+      ).contractTickerSymbol;
+      const nativeTokenBalance = ethers.formatUnits(
+        tokens.find((t) => !!t.nativeToken).balance,
+        18
+      );
+      const nativeTokenPrice = tokens.find((t) => !!t.nativeToken).quoteRate;
+      const balances = tokens
+        .filter(
+          (token) => token.balance.toString() !== "0" || token.nativeToken
+        )
+        .map((token) => ({
+          ...token,
+          logoURI: defaultTokensList.find((t) =>
+            token.nativeToken
+              ? t.name === token.contractName
+              : t.address.toLowerCase() === token.contractAddress.toLowerCase()
+          )?.logoURI,
+        }));
+
+      /**
+       * token attributes:
+       *
+       *    nativeToken
+       *    contractName
+       *    contractTickerSymbol
+       *    contractAddress
+       *    contractDecimals
+       *    balance
+       *    quote
+       *    logoURI
+       */
+
+      return [nativeTokenName, nativeTokenBalance, nativeTokenPrice, balances];
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /*
   async nativeCurrency() {
     const balance = await this.provider.getBalance(this.address);
     return ethers.formatEther(balance);
