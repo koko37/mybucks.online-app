@@ -7,12 +7,7 @@ import styled from "styled-components";
 import { format } from "date-fns";
 import toFlexible from "toflexible";
 
-import {
-  truncate,
-  explorerLinkOfTransaction,
-  explorerLinkOfAddress,
-  explorerLinkOfContract,
-} from "@mybucks/lib/utils";
+import { truncate } from "@mybucks/lib/utils";
 import BackIcon from "@mybucks/assets/icons/back.svg";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
 import ArrowUpRightIcon from "@mybucks/assets/icons/arrow-up-right.svg";
@@ -172,7 +167,7 @@ const Token = () => {
   const [hasErrorInput, setHasErrorInput] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [transaction, setTransaction] = useState(null);
-  const [txHash, setTxHash] = useState("");
+  const [txnHash, setTxnHash] = useState("");
 
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState(0);
@@ -182,7 +177,6 @@ const Token = () => {
 
   const {
     account,
-    chainId,
     selectedTokenAddress,
     selectToken,
     tokenBalances,
@@ -223,17 +217,14 @@ const Token = () => {
       }
 
       setHasErrorInput(false);
-      const txData = token.nativeToken
-        ? {
-            to: recipient,
-            value: ethers.parseEther(amount.toString()),
-            data: null,
-          }
-        : await account.populateTransferErc20(
-            selectedTokenAddress,
-            recipient,
-            ethers.parseUnits(amount.toString(), token.contractDecimals)
-          );
+      const txData = await account.populateTransferToken(
+        token.nativeToken ? "" : selectedTokenAddress,
+        recipient,
+        ethers.parseUnits(
+          amount.toString(),
+          token.nativeToken ? 18 : token.contractDecimals
+        )
+      );
       setTransaction(txData);
 
       try {
@@ -254,17 +245,12 @@ const Token = () => {
     estimateGas();
   }, [recipient, amount, token]);
 
-  const returnHome = () => selectToken("");
-  const setMaxAmount = () => setAmount(balance);
-  const sendToken = () => setConfirming(true);
-
-  const execute = async (tx) => {
+  const onSuccess = async (txn) => {
     setConfirming(false);
     setTransaction(null);
     setRecipient("");
     setAmount(0);
-
-    setTxHash(tx.hash);
+    setTxnHash(txn.hash);
   };
 
   if (confirming) {
@@ -272,19 +258,25 @@ const Token = () => {
       <ConfirmTransaction
         {...transaction}
         onReject={() => setConfirming(false)}
-        onSubmit={execute}
+        onSuccess={onSuccess}
       />
     );
   }
 
-  if (txHash) {
-    return <MinedTransaction hash={txHash} back={() => setTxHash("")} />;
+  if (txnHash) {
+    return (
+      <MinedTransaction
+        txnHash={txnHash}
+        txnLink={account.linkOfTransaction(txnHash)}
+        back={() => setTxnHash("")}
+      />
+    );
   }
 
   return (
     <Container>
       <NavsWrapper>
-        <button onClick={returnHome}>
+        <button onClick={() => selectToken("")}>
           <img src={BackIcon} />
         </button>
 
@@ -307,7 +299,7 @@ const Token = () => {
             />
           ) : (
             <a
-              href={explorerLinkOfContract(chainId, token.contractAddress)}
+              href={account.linkOfContract(token.contractAddress)}
               target="_blank"
             >
               <Avatar
@@ -320,7 +312,7 @@ const Token = () => {
 
           {!token.nativeToken && (
             <a
-              href={explorerLinkOfContract(chainId, token.contractAddress)}
+              href={account.linkOfContract(token.contractAddress)}
               target="_blank"
             >
               <ArrowUpRight />
@@ -360,7 +352,7 @@ const Token = () => {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          <MaxButton onClick={setMaxAmount}>Max</MaxButton>
+          <MaxButton onClick={() => setAmount(balance)}>Max</MaxButton>
         </AmountWrapper>
 
         {hasErrorInput ? (
@@ -381,7 +373,7 @@ const Token = () => {
         )}
 
         <Submit
-          onClick={sendToken}
+          onClick={() => setConfirming(true)}
           disabled={hasErrorInput || gasEstimation === 0}
         >
           Submit
@@ -395,12 +387,11 @@ const Token = () => {
           <HistoryTable>
             <tbody>
               {history.map((item) => (
-                <tr key={item.txHash}>
+                <tr key={item.txnHash}>
                   <td>{format(item.time, "MM/dd")}</td>
                   <AddressTd>
                     <AddressLinkLg
-                      href={explorerLinkOfAddress(
-                        chainId,
+                      href={account.linkOfAddress(
                         item.transferType === "IN"
                           ? item.fromAddress
                           : item.toAddress
@@ -413,8 +404,7 @@ const Token = () => {
                     </AddressLinkLg>
 
                     <AddressLink
-                      href={explorerLinkOfAddress(
-                        chainId,
+                      href={account.linkOfAddress(
                         item.transferType === "IN"
                           ? item.fromAddress
                           : item.toAddress
@@ -439,7 +429,7 @@ const Token = () => {
                   </AmountTd>
                   <td>
                     <Link
-                      href={explorerLinkOfTransaction(chainId, item.txHash)}
+                      href={account.linkOfTransaction(item.txnHash)}
                       target="_blank"
                     >
                       details

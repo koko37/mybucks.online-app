@@ -4,7 +4,7 @@ import { NETWORKS } from "@mybucks/lib/conf";
 import TokenRow from "./TokenRow";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
-import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
+import { truncate } from "@mybucks/lib/utils";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import toFlexible from "toflexible";
@@ -210,7 +210,7 @@ const EvmHome = () => {
         <AddressWrapper>
           <AddressAndCopy>
             <AddressLink
-              href={explorerLinkOfAddress(chainId, account.address)}
+              href={account.linkOfAddress(account.address)}
               target="_blank"
             >
               <AddressLong>{truncate(account.address)}</AddressLong>

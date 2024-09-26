@@ -35,6 +35,18 @@ class EvmAccount {
     return this.account && this.account.address;
   }
 
+  linkOfAddress(address) {
+    return NETWORKS[this.chainId].scanner + "/address/" + address;
+  }
+
+  linkOfContract(address) {
+    return NETWORKS[this.chainId].scanner + "/address/" + address + "#code";
+  }
+
+  linkOfTransaction(txn) {
+    return NETWORKS[this.chainId].scanner + "/tx/" + txn;
+  }
+
   async getNetworkStatus() {
     const { gasPrice } = await this.provider.getFeeData();
     this.gasPrice = gasPrice;
@@ -113,7 +125,7 @@ class EvmAccount {
       return items
         .map(({ transfers }) =>
           transfers.map((item) => ({
-            txHash: item.txHash,
+            txnHash: item.txHash,
             transferType: item.transferType,
             fromAddress: item.fromAddress,
             toAddress: item.toAddress,
@@ -147,11 +159,26 @@ class EvmAccount {
     await tx.wait();
   }
 */
-  async populateTransferErc20(token, to, amount) {
+
+  /**
+   *
+   * @param {*} token contract address or null(for native currency)
+   * @param {*} to
+   * @param {*} value
+   */
+  async populateTransferToken(token, to, value) {
+    if (!token) {
+      return {
+        to,
+        value,
+        data: null,
+      };
+    }
+
     const erc20 = new Contract(token, IERC20.abi, this.provider);
     const result = await erc20
       .connect(this.account)
-      .transfer.populateTransaction(to, amount);
+      .transfer.populateTransaction(to, value);
     return result;
   }
 

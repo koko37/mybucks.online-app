@@ -89,7 +89,7 @@ const Button = styled(BaseButton)`
   `}
 `;
 
-const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
+const ConfirmTransaction = ({ to, value = 0, data, onSuccess, onReject }) => {
   const { account, fetchBalances, nativeTokenName, nativeTokenPrice } =
     useContext(StoreContext);
   const [gasOption, setGasOption] = useState("low");
@@ -122,7 +122,7 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
     setHasError(false);
 
     try {
-      const tx = await account.execute({
+      const txn = await account.execute({
         to,
         value,
         data,
@@ -131,7 +131,7 @@ const ConfirmTransaction = ({ to, value = 0, data, onSubmit, onReject }) => {
 
       // update balances
       fetchBalances();
-      onSubmit(tx);
+      onSuccess(txn);
     } catch (e) {
       setHasError(true);
     }

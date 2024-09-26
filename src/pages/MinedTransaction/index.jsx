@@ -1,7 +1,6 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Container, Box as BaseBox } from "@mybucks/components/Containers";
-import { StoreContext } from "@mybucks/contexts/Store";
-import { explorerLinkOfTransaction, truncate } from "@mybucks/lib/utils";
+import { truncate } from "@mybucks/lib/utils";
 import { H3 } from "@mybucks/components/Texts";
 import styled from "styled-components";
 import Link from "@mybucks/components/Link";
@@ -33,27 +32,23 @@ const Hash = styled.p`
   line-height: 140%;
 `;
 
-const MinedTransaction = ({ hash, back }) => {
-  const { chainId } = useContext(StoreContext);
+const MinedTransaction = ({ txnHash, txnLink, back }) => (
+  <Container>
+    <NavsWrapper>
+      <button onClick={back}>
+        <img src={BackIcon} />
+      </button>
+    </NavsWrapper>
 
-  return (
-    <Container>
-      <NavsWrapper>
-        <button onClick={back}>
-          <img src={BackIcon} />
-        </button>
-      </NavsWrapper>
-
-      <Box>
-        <Title>Transaction mined!</Title>
-        <img src={SuccessIcon} />
-        <Hash>Hash: {truncate(hash)}</Hash>
-        <Link href={explorerLinkOfTransaction(chainId, hash)} target="_blank">
-          View on explorer
-        </Link>
-      </Box>
-    </Container>
-  );
-};
+    <Box>
+      <Title>Transaction mined!</Title>
+      <img src={SuccessIcon} />
+      <Hash>Hash: {truncate(txnHash)}</Hash>
+      <Link href={txnLink} target="_blank">
+        View on explorer
+      </Link>
+    </Box>
+  </Container>
+);
 
 export default MinedTransaction;
