@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import media from "@mybucks/styles/media";
 
 const Progress = styled.progress`
   display: block;

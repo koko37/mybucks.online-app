@@ -7,8 +7,8 @@ import { StoreContext } from "./contexts/Store";
 import styled from "styled-components";
 
 import SignIn from "@mybucks/pages/Signin";
-import Home from "@mybucks/pages/Home";
-import Token from "./pages/Token";
+import Home from "@mybucks/pages/evm/Home";
+import Token from "./pages/evm/Token";
 import Menu from "./pages/Menu";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -26,13 +26,28 @@ const ConnectionIssue = styled.div`
   font-weight: ${({ theme }) => theme.weights.regular};
 `;
 
-function App() {
-  const { connectivity, hash, account, selectedTokenAddress, inMenu, reset } =
+function Content() {
+  const { account, hash, selectedTokenAddress, inMenu } =
     useContext(StoreContext);
+
+  if (!hash || !account) {
+    return <SignIn />;
+  }
+  if (inMenu) {
+    return <Menu />;
+  }
+  if (selectedTokenAddress) {
+    return <Token />;
+  }
+  return <Home />;
+}
+
+function App() {
+  const { connectivity, hash, reset } = useContext(StoreContext);
 
   useIdleTimer({
     onIdle: () => {
-      if (hash && account) {
+      if (hash) {
         reset();
         toast("Account locked after 15 minutes idle!");
       }
@@ -48,17 +63,7 @@ function App() {
           Please check your internet connection!
         </ConnectionIssue>
       )}
-
-      {!hash || !account ? (
-        <SignIn />
-      ) : selectedTokenAddress ? (
-        <Token />
-      ) : inMenu ? (
-        <Menu />
-      ) : (
-        <Home />
-      )}
-
+      <Content />
       <ToastContainer
         position="top-center"
         hideProgressBar={true}

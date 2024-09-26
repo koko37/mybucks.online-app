@@ -14,7 +14,7 @@ export const H3 = styled.h3`
   font-size: ${({ theme }) => theme.sizes.xl};
   font-weight: ${({ theme }) => theme.weights.bold};
   line-height: 150%;
-  margin-bottom: ${({ theme }) => theme.sizes.x2l};
+  margin-bottom: ${({ theme }) => theme.sizes.base};
 
   ${media.sm`
     font-size: ${({ theme }) => theme.sizes.base};

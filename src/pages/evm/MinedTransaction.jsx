@@ -1,9 +1,9 @@
 import React from "react";
-import { Container, Box as BaseBox } from "@mybucks/components/Containers";
-import { truncate } from "@mybucks/lib/utils";
-import { H3 } from "@mybucks/components/Texts";
 import styled from "styled-components";
+import { Container, Box as BaseBox } from "@mybucks/components/Containers";
+import { H3 } from "@mybucks/components/Texts";
 import Link from "@mybucks/components/Link";
+import { truncate } from "@mybucks/lib/utils";
 
 import BackIcon from "@mybucks/assets/icons/back.svg";
 import SuccessIcon from "@mybucks/assets/icons/success.svg";

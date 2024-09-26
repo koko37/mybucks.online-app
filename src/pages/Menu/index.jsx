@@ -4,12 +4,12 @@ import styled from "styled-components";
 import { toast } from "react-toastify";
 import copy from "clipboard-copy";
 
-import BackIcon from "@mybucks/assets/icons/back.svg";
-
 import { Container, Box as BaseBox } from "@mybucks/components/Containers";
 import BaseButton from "@mybucks/components/Button";
 import ConfirmPasscodeModal from "@mybucks/components/ConfirmPasscodeModal";
 import { H3 } from "@mybucks/components/Texts";
+
+import BackIcon from "@mybucks/assets/icons/back.svg";
 
 const Box = styled(BaseBox)`
   display: flex;
@@ -52,16 +52,6 @@ const Menu = () => {
     toast("Address copied into clipboard.");
   };
 
-  const backupPrivateKey = () => {
-    copy(account.signer);
-    toast("Private key copied into clipboard.");
-  };
-
-  const backupPasswords = () => {
-    copy(`${password} : ${passcode}`);
-    toast("Password copied into clipboard.");
-  };
-
   const onClickPassword = () => {
     setIsBackupPassword(true);
     setConfirmPasscode(true);
@@ -75,9 +65,11 @@ const Menu = () => {
   const onConfirmedPasscode = () => {
     setConfirmPasscode(false);
     if (isBackupPassword) {
-      backupPasswords();
+      copy(`${password} : ${passcode}`);
+      toast("Password copied into clipboard.");
     } else {
-      backupPrivateKey();
+      copy(account.signer);
+      toast("Private key copied into clipboard.");
     }
   };
 

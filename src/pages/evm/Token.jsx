@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext, useMemo } from "react";
-import { StoreContext } from "@mybucks/contexts/Store";
-import ConfirmTransaction from "@mybucks/pages/ConfirmTransaction";
-import MinedTransaction from "@mybucks/pages/MinedTransaction";
 import { ethers } from "ethers";
 import styled from "styled-components";
 import { format } from "date-fns";
 import toFlexible from "toflexible";
 
+import { StoreContext } from "@mybucks/contexts/Store";
+import ConfirmTransaction from "@mybucks/pages/evm/ConfirmTransaction";
+import MinedTransaction from "@mybucks/pages/evm/MinedTransaction";
 import { truncate } from "@mybucks/lib/utils";
 import BackIcon from "@mybucks/assets/icons/back.svg";
 import RefreshIcon from "@mybucks/assets/icons/refresh.svg";
