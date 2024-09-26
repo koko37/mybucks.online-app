@@ -31,7 +31,7 @@ export const DEFAULT_NETWORK = NETWORK_EVM;
 export const DEFAULT_CHAIN_ID = 1;
 export const DEFAULT_ASSET = "ETH";
 
-export const NETWORKS = {
+export const EVM_NETWORKS = {
   1: {
     chainId: 1,
     name: "ethereum",

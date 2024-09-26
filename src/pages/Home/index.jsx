@@ -1,6 +1,6 @@
 import React, { useContext, useState, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
-import { NETWORKS } from "@mybucks/lib/conf";
+import { EVM_NETWORKS } from "@mybucks/lib/conf";
 import TokenRow from "./TokenRow";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
@@ -186,7 +186,7 @@ const EvmHome = () => {
       <NetworkAndFeatures>
         <NetworkWrapper>
           <Select onChange={changeChain} value={chainId}>
-            {Object.values(NETWORKS).map(({ chainId: cId, label }) => (
+            {Object.values(EVM_NETWORKS).map(({ chainId: cId, label }) => (
               <option key={cId} value={cId}>
                 {label}
               </option>

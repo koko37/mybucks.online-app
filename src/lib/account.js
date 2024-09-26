@@ -3,7 +3,7 @@ import { CovalentClient } from "@covalenthq/client-sdk";
 import camelcaseKeys from "camelcase-keys";
 import { tokens as defaultTokensList } from "@sushiswap/default-token-list";
 
-import { NETWORKS, getEvmPrivateKey } from "@mybucks/lib/conf";
+import { EVM_NETWORKS, getEvmPrivateKey } from "@mybucks/lib/conf";
 import IERC20 from "./erc20.json";
 
 class EvmAccount {
@@ -21,7 +21,7 @@ class EvmAccount {
 
   constructor(hashKey, chainId) {
     this.chainId = chainId;
-    this.provider = new ethers.JsonRpcProvider(NETWORKS[chainId].provider);
+    this.provider = new ethers.JsonRpcProvider(EVM_NETWORKS[chainId].provider);
 
     this.signer = getEvmPrivateKey(hashKey);
     this.account = new ethers.Wallet(this.signer, this.provider);
@@ -36,15 +36,15 @@ class EvmAccount {
   }
 
   linkOfAddress(address) {
-    return NETWORKS[this.chainId].scanner + "/address/" + address;
+    return EVM_NETWORKS[this.chainId].scanner + "/address/" + address;
   }
 
   linkOfContract(address) {
-    return NETWORKS[this.chainId].scanner + "/address/" + address + "#code";
+    return EVM_NETWORKS[this.chainId].scanner + "/address/" + address + "#code";
   }
 
   linkOfTransaction(txn) {
-    return NETWORKS[this.chainId].scanner + "/tx/" + txn;
+    return EVM_NETWORKS[this.chainId].scanner + "/tx/" + txn;
   }
 
   async getNetworkStatus() {
