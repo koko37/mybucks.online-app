@@ -1,15 +1,14 @@
 import { useContext } from "react";
-import { ToastContainer } from "react-toastify";
-import { useIdleTimer } from "react-idle-timer";
-import { toast } from "react-toastify";
-import { IDLE_DURATION } from "./lib/conf";
-import { StoreContext } from "./contexts/Store";
 import styled from "styled-components";
+import { toast, ToastContainer } from "react-toastify";
+import { useIdleTimer } from "react-idle-timer";
 
+import { IDLE_DURATION, NETWORK_EVM } from "@mybucks/lib/conf";
+import { StoreContext } from "@mybucks/contexts/Store";
 import SignIn from "@mybucks/pages/Signin";
-import Home from "@mybucks/pages/evm/Home";
-import Token from "./pages/evm/Token";
-import Menu from "./pages/Menu";
+import Menu from "@mybucks/pages/Menu";
+import EvmHome from "@mybucks/pages/evm/Home";
+import EvmToken from "@mybucks/pages/evm/Token";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -27,19 +26,21 @@ const ConnectionIssue = styled.div`
 `;
 
 function Content() {
-  const { account, hash, selectedTokenAddress, inMenu } =
+  const { account, selectedTokenAddress, inMenu, network } =
     useContext(StoreContext);
 
-  if (!hash || !account) {
+  if (!account) {
     return <SignIn />;
   }
   if (inMenu) {
     return <Menu />;
   }
-  if (selectedTokenAddress) {
-    return <Token />;
+  if (network === NETWORK_EVM) {
+    if (selectedTokenAddress) {
+      return <EvmToken />;
+    }
+    return <EvmHome />;
   }
-  return <Home />;
 }
 
 function App() {
@@ -66,7 +67,7 @@ function App() {
       <Content />
       <ToastContainer
         position="top-center"
-        hideProgressBar={true}
+        hideProgressBar={false}
         theme="light"
       />
     </AppWrapper>

@@ -50,9 +50,9 @@ const StoreProvider = ({ children }) => {
   const [hash, setHash] = useState("");
 
   // network related
-  const [chainId, setChainId] = useState(DEFAULT_CHAIN_ID);
-  const [network, setNetwork] = useState(DEFAULT_NETWORK);
   const [account, setAccount] = useState(null);
+  const [network, setNetwork] = useState(DEFAULT_NETWORK);
+  const [chainId, setChainId] = useState(DEFAULT_CHAIN_ID);
 
   // common
   const [loading, setLoading] = useState(false);
