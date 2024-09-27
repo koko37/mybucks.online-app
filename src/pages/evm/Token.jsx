@@ -53,10 +53,17 @@ const TokenDetails = styled.div`
 `;
 
 const LogoAndLink = styled.div`
+  position: relative;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   gap: ${({ theme }) => theme.sizes.x3s};
+`;
+
+const ContractLink = styled.a`
+  position: absolute;
+  top: -2px;
+  left: calc(50% + 26px);
 `;
 
 const ArrowUpRight = styled.img.attrs({ src: ArrowUpRightIcon })`
@@ -288,10 +295,6 @@ const Token = () => {
 
       <TokenDetails>
         <LogoAndLink>
-          {!token.nativeToken && (
-            <ArrowUpRight style={{ visibility: "hidden" }} />
-          )}
-
           {token.nativeToken ? (
             <Avatar
               uri={token.logoURI}
@@ -312,12 +315,12 @@ const Token = () => {
           )}
 
           {!token.nativeToken && (
-            <a
+            <ContractLink
               href={account.linkOfContract(token.contractAddress)}
               target="_blank"
             >
               <ArrowUpRight />
-            </a>
+            </ContractLink>
           )}
         </LogoAndLink>
 
