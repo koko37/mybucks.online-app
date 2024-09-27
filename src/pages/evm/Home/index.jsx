@@ -1,10 +1,10 @@
 import React, { useContext, useState, useMemo } from "react";
 import { StoreContext } from "@mybucks/contexts/Store";
-import { NETWORKS } from "@mybucks/lib/conf";
+import { EVM_NETWORKS } from "@mybucks/lib/conf";
 import TokenRow from "./TokenRow";
 import copy from "clipboard-copy";
 import { ethers } from "ethers";
-import { explorerLinkOfAddress, truncate } from "@mybucks/lib/utils";
+import { truncate } from "@mybucks/lib/utils";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import toFlexible from "toflexible";
@@ -154,7 +154,7 @@ const EvmHome = () => {
     updateChain,
     reset,
     nativeTokenName,
-    nativeBalance,
+    nativeTokenBalance,
     tokenBalances,
     tick,
     fetchBalances,
@@ -186,7 +186,7 @@ const EvmHome = () => {
       <NetworkAndFeatures>
         <NetworkWrapper>
           <Select onChange={changeChain} value={chainId}>
-            {Object.values(NETWORKS).map(({ chainId: cId, label }) => (
+            {Object.values(EVM_NETWORKS).map(({ chainId: cId, label }) => (
               <option key={cId} value={cId}>
                 {label}
               </option>
@@ -210,7 +210,7 @@ const EvmHome = () => {
         <AddressWrapper>
           <AddressAndCopy>
             <AddressLink
-              href={explorerLinkOfAddress(chainId, account.address)}
+              href={account.linkOfAddress(account.address)}
               target="_blank"
             >
               <AddressLong>{truncate(account.address)}</AddressLong>
@@ -237,7 +237,7 @@ const EvmHome = () => {
             ? "-----"
             : !balancesVisible
             ? "*****"
-            : Number(nativeBalance).toFixed(4)}
+            : Number(nativeTokenBalance).toFixed(4)}
           &nbsp;
           {nativeTokenName}
         </NativeBalance>

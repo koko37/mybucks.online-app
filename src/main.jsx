@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import StoreProvider from "@mybucks/contexts/Store";
 import { ThemeProvider } from "styled-components";
+
 import GlobalStyle from "@mybucks/styles/global.js";
 import themes from "@mybucks/styles/themes.js";
 

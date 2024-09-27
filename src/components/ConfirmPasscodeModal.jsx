@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import { StoreContext } from "@mybucks/contexts/Store";

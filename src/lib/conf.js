@@ -31,7 +31,7 @@ export const DEFAULT_NETWORK = NETWORK_EVM;
 export const DEFAULT_CHAIN_ID = 1;
 export const DEFAULT_ASSET = "ETH";
 
-export const NETWORKS = {
+export const EVM_NETWORKS = {
   1: {
     chainId: 1,
     name: "ethereum",
@@ -109,3 +109,6 @@ export const gasMultiplier = (option) =>
 
 // 15 minutes, after this period, wallet will be locked.
 export const IDLE_DURATION = 900_000;
+
+// in every 15 seconds, it refreshes gas price or network status
+export const REFRESH_STATUS_DURATION = 15_000;

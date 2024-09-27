@@ -1,18 +1,14 @@
-import { createContext, useState, useEffect, useMemo } from "react";
+import { createContext, useState, useEffect } from "react";
 import EvmAccount from "@mybucks/lib/account";
 import {
   DEFAULT_CHAIN_ID,
   DEFAULT_NETWORK,
   DEFAULT_ASSET,
   NETWORK_EVM,
+  REFRESH_STATUS_DURATION,
 } from "@mybucks/lib/conf";
-import { tokens as defaultTokens } from "@sushiswap/default-token-list";
-import { ethers } from "ethers";
-import { CovalentClient } from "@covalenthq/client-sdk";
-import camelcaseKeys from "camelcase-keys";
 
 export const StoreContext = createContext({
-  client: null,
   connectivity: true,
   password: "",
   passcode: "",
@@ -32,7 +28,7 @@ export const StoreContext = createContext({
   openMenu: (m) => {},
 
   nativeTokenName: DEFAULT_ASSET,
-  nativeBalance: 0,
+  nativeTokenBalance: 0,
   tokenBalances: [],
   nftBalances: [],
 
@@ -46,10 +42,6 @@ export const StoreContext = createContext({
 });
 
 const StoreProvider = ({ children }) => {
-  const client = useMemo(
-    () => new CovalentClient(import.meta.env.VITE_COVALENT_API_KEY),
-    []
-  );
   const [connectivity, setConnectivity] = useState(true);
   // key parts
   const [password, setPassword] = useState("");
@@ -58,9 +50,9 @@ const StoreProvider = ({ children }) => {
   const [hash, setHash] = useState("");
 
   // network related
-  const [chainId, setChainId] = useState(DEFAULT_CHAIN_ID);
-  const [network, setNetwork] = useState(DEFAULT_NETWORK);
   const [account, setAccount] = useState(null);
+  const [network, setNetwork] = useState(DEFAULT_NETWORK);
+  const [chainId, setChainId] = useState(DEFAULT_CHAIN_ID);
 
   // common
   const [loading, setLoading] = useState(false);
@@ -68,7 +60,7 @@ const StoreProvider = ({ children }) => {
 
   // balances related
   const [nativeTokenName, setNativeTokenName] = useState(DEFAULT_ASSET);
-  const [nativeBalance, setNativeBalance] = useState(0);
+  const [nativeTokenBalance, setNativeTokenBalance] = useState(0);
   const [tokenBalances, setTokenBalances] = useState([]);
   const [nftBalances, setNftBalances] = useState([]);
 
@@ -93,14 +85,14 @@ const StoreProvider = ({ children }) => {
     if (!account) {
       return;
     }
-    account.getGasPrice().then(() => {
+    account.getNetworkStatus().then(() => {
       setTick((_tick) => _tick + 1);
     });
     fetchBalances();
 
-    const intervalId = setInterval(() => {
+    const timerId = setInterval(() => {
       account
-        .getGasPrice()
+        .getNetworkStatus()
         .then(() => {
           setConnectivity(true);
         })
@@ -110,10 +102,10 @@ const StoreProvider = ({ children }) => {
         .finally(() => {
           setTick((_tick) => _tick + 1);
         });
-    }, 15000);
+    }, REFRESH_STATUS_DURATION);
 
     return () => {
-      clearInterval(intervalId);
+      clearInterval(timerId);
     };
   }, [account]);
 
@@ -130,7 +122,7 @@ const StoreProvider = ({ children }) => {
     setLoading(false);
 
     setNativeTokenName(DEFAULT_ASSET);
-    setNativeBalance(0);
+    setNativeTokenBalance(0);
     setTokenBalances([]);
     setNftBalances([]);
 
@@ -148,51 +140,25 @@ const StoreProvider = ({ children }) => {
 
   const fetchBalances = async () => {
     setLoading(true);
-    try {
-      const { data, error } =
-        await client.BalanceService.getTokenBalancesForWalletAddress(
-          chainId,
-          account.address
-        );
-      if (error) {
-        throw new Error("invalid balances");
-      }
-      const tokens = camelcaseKeys(data.items, { deep: true });
-      setTokenBalances(
-        tokens
-          .filter(
-            (token) => token.balance.toString() !== "0" || token.nativeToken
-          )
-          .map((token) => ({
-            ...token,
-            logoURI: defaultTokens.find((t) =>
-              token.nativeToken
-                ? t.name === token.contractName
-                : t.address.toLowerCase() ===
-                  token.contractAddress.toLowerCase()
-            )?.logoURI,
-          }))
-      );
-      setNativeBalance(
-        ethers.formatUnits(tokens.find((t) => !!t.nativeToken).balance, 18)
-      );
-      setNativeTokenName(
-        tokens.find((t) => !!t.nativeToken).contractTickerSymbol
-      );
-      setNativeTokenPrice(tokens.find((t) => !!t.nativeToken).quoteRate);
+    const result = await account.queryBalances();
+
+    if (result) {
+      setNativeTokenName(result[0]);
+      setNativeTokenBalance(result[1]);
+      setNativeTokenPrice(result[2]);
+      setTokenBalances(result[3]);
+
       setConnectivity(true);
-    } catch (e) {
+    } else {
       setConnectivity(false);
-      console.error("failed to fetch token balances ...");
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (
     <StoreContext.Provider
       value={{
-        client,
         connectivity,
         password,
         passcode,
@@ -208,7 +174,7 @@ const StoreProvider = ({ children }) => {
         inMenu,
         openMenu,
         nativeTokenName,
-        nativeBalance,
+        nativeTokenBalance,
         tokenBalances,
         nftBalances,
         nativeTokenPrice,
